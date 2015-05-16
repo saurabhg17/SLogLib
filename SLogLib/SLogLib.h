@@ -36,9 +36,9 @@
 
 #if !defined(SLOGLIB_DISABLE_LOGGING)
 	// The macro to write the message to all logging devices.
-	// traceLevel is the message level.
+	// level is the message level.
 	// msg is the message to write to logging devices.
-	#define SLOGLIB_LOG_MESSAGE(traceLevel, msg)         \
+	#define SLOGLIB_LOG_MESSAGE(level, msg)         \
 	{                                                    \
 		unsigned int _lineNo = __LINE__;                 \
 		std::ostringstream __stream__unique__;           \
@@ -50,7 +50,7 @@
 							  __stream__unique__.str()); \
 	}
 	
-	// Convenience macros to write the message at various trace levels.
+	// Convenience macros to write the message at various levels.
 	#define SLOGLIB_LOG_MSG_INFO(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::MESSAGE_LEVEL_INFO   , msg);
 	#define SLOGLIB_LOG_MSG_WARN(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::MESSAGE_LEVEL_WARNING, msg);
 	#define SLOGLIB_LOG_MSG_ERROR(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::MESSAGE_LEVEL_ERROR  , msg);
