@@ -49,6 +49,8 @@ public:
 		: mNewLineFlag(newLineflag)
 	{}
 	
+	virtual ~AbstractFormatter() {}
+	
 	///! Format a message to std::string.
 	virtual std::string FormatMessage(const Message& msg) const = 0;
 

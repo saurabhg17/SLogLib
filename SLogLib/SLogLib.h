@@ -46,7 +46,7 @@
 		SLogLib::writeMessage(__FILE__,                  \
                               __FUNCTION__,              \
 							  _lineNo,                   \
-							  traceLevel,                \
+							  level,                     \
 							  __stream__unique__.str()); \
 	}
 	

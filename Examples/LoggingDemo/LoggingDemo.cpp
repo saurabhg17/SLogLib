@@ -1,13 +1,27 @@
 
+// This file is part of SLogLib; you can redistribute it and/or
+// modify it under the terms of the MIT License.
+// 
 // Copyright (c) 2015 Saurabh Garg
 // 
-// This file is part of SLogLib; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License v2.1 as
-// published by the Free Software Foundation.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 // 
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// 
 // Author(s): Saurabh Garg
 
 #include "SLogLib/SLogLib"
@@ -27,11 +41,5 @@ int main()
 	SLOGLIB_LOG_MSG_INFO("a = " << a << " b = " << b);
 	SLOGLIB_LOG_MSG_INFO(c);
 	
-	unsigned int a1 = MESSAGE_LEVEL_INFO;
-	unsigned int a2 = MESSAGE_LEVEL_WARNING;
-	unsigned int a3 = MESSAGE_LEVEL_ERROR;
-	unsigned int a4 = MESSAGE_LEVEL_DEBUG;
-	unsigned int a5 = MESSAGE_LEVEL_DETAIL;
-
 	return 0;
 }
