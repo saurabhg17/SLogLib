@@ -24,22 +24,32 @@
 // 
 // Author(s): Saurabh Garg
 
-#include "SLogLib/SLogLib"
+#ifndef _QWIDGETLOGGER_H_
+#define _QWIDGETLOGGER_H_
 
-int main()
+#include <QtWidgets/QTextEdit>
+#include "SLogLib/Devices/AbstractLoggingDevice.h"
+#include <string>
+
+class QWidgetLogger : public QTextEdit, public SLogLib::AbstractLoggingDevice
 {
-	// Add these lines at the beginning of your program.
-	// The devices and formatters are automatically deleted by SLogLib.
-	using namespace SLogLib;
-	addLoggingDevice(new ConsoleLogger(new NullFormatter));
-	addLoggingDevice(new FileLogger("foo.log", FileLogger::Immediately, new DetailedFormatter));
+	Q_OBJECT
 	
-	// The following line writes the message to both console and file.
-	int a = 10;
-	double b = 15.3;
-	const char* c = "Success";
-	SLOGLIB_LOG_MSG_INFO("a = " << a << " b = " << b);
-	SLOGLIB_LOG_MSG_INFO(c);
+public:
 	
-	return 0;
-}
+	explicit QWidgetLogger(SLogLib::AbstractFormatter* formatter);
+	explicit QWidgetLogger(SLogLib::AbstractFormatter* formatter, const std::string& name);
+	~QWidgetLogger();
+
+	QWidgetLogger(const QWidgetLogger&) = delete;
+    QWidgetLogger & operator=(const QWidgetLogger&) = delete;
+	QWidgetLogger(const QWidgetLogger&&) = delete;
+    QWidgetLogger & operator=(const QWidgetLogger&&) = delete;
+
+private:
+	
+	void _WriteMessage(const std::string& message) override;
+	void _Initialize();
+};
+
+#endif // _QWIDGETLOGGER_H_

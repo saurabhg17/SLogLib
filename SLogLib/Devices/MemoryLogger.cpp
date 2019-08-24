@@ -24,44 +24,44 @@
 // 
 // Author(s): Saurabh Garg
 
-#ifndef _SLOGLIB_CALLINFO_H_
-#define _SLOGLIB_CALLINFO_H_
-
-#include <string>
-#include <vector>
+#include "SLogLib/Devices/MemoryLogger.h"
+#include "SLogLib/SysUtils.h"
 
 namespace SLogLib {
 ;
 
-// The CallInfo structure stores the information of a single function call.
-struct CallInfo
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+MemoryLogger::MemoryLogger(AbstractFormatter* formatter)
+	: AbstractLoggingDevice(formatter)
 {
-public:
-	
-	CallInfo()
-		: mLineNumber(0)
-	{}
-	CallInfo(const std::string& fileName, const std::string& funcName, unsigned int lineNumber)
-		: mFileName(fileName), mFuncName(funcName), mLineNumber(lineNumber)
-	{}
-	
-	bool operator != (const CallInfo& B) const
+	DisableBuffering();
+}
+MemoryLogger::MemoryLogger(AbstractFormatter* formatter, const std::string& name) 
+	: AbstractLoggingDevice(formatter, name)
+{
+	DisableBuffering();
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+void MemoryLogger::_WriteMessage(const std::string& message)
+{
+	mMessages.emplace_back(message);
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+std::string MemoryLogger::allMessages() const
+{
+	std::stringstream _stream;
+	for(const std::string& _message : mMessages)
 	{
-		return !(B.mFileName==mFileName && B.mFuncName==mFuncName && B.mLineNumber==mLineNumber);
+		_stream << _message;
 	}
+	return _stream.str();
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-
-public:
-	
-	std::string  mFileName;    // The name of the file containing the function.
-	std::string  mFuncName;    // The name of the function.
-	unsigned int mLineNumber;  // The line number at which SLOGLIB_ADD_TO_CALLSTACK macro was 
-	                           // inserted in the function.
-};
-
-// Define a type for storing array of CallInfo's forming a CallStack.
-typedef std::vector<CallInfo> CallStack;
-
-};	// End namespace SLogLib.
-
-#endif // _SLOGLIB_CALLINFO_H_
+}	// End namespace SLogLib.

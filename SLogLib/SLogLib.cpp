@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -38,9 +38,9 @@ void addLoggingDevice(AbstractLoggingDevice* device)
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void removeLoggingDevice(const std::string& deviceName)
+void removeLoggingDevice(const std::string& name)
 {
-	LoggingManager::Instance().RemoveDevice(deviceName);
+	LoggingManager::Instance().RemoveDevice(name);
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -54,9 +54,9 @@ void removeLoggingDevice(AbstractLoggingDevice* device)
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-AbstractLoggingDevice* queryLoggingDevice(const std::string& deviceName)
+AbstractLoggingDevice* queryLoggingDevice(const std::string& name)
 {
-	return LoggingManager::Instance().QueryDevice(deviceName);
+	return LoggingManager::Instance().QueryDevice(name);
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -65,7 +65,7 @@ AbstractLoggingDevice* queryLoggingDevice(const std::string& deviceName)
 void writeMessage(const std::string& fileName,
 	              const std::string& funcName,
 				  unsigned int       lineNo,
-				  unsigned int       level,
+				  MessageLevel       level,
 				  const std::string& msg)
 {
 	LoggingManager::Instance().WriteMessage(fileName, funcName, lineNo, level, msg);
@@ -76,15 +76,15 @@ void writeMessage(const std::string& fileName,
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void disableLogging()
 {
-	LoggingManager::Instance().setIsDisabled(true);
+	LoggingManager::Instance().SetDisabled(true);
 }
 void enableLogging()
 {
-	LoggingManager::Instance().setIsDisabled(false);
+	LoggingManager::Instance().SetDisabled(false);
 }
 bool isLoggingEnabled()
 {
-	return LoggingManager::Instance().isDisabled();
+	return LoggingManager::Instance().IsDisabled();
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 

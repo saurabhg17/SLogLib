@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,26 +25,28 @@
 // Author(s): Saurabh Garg
 
 #include <QtCore/QtGlobal>
-#if QT_VERSION >= 0x050000
-	#include <QtWidgets/QApplication>
-#elif QT_VERSION >= 0x040000
-	#include <QtGui/QApplication>
-#endif
-
+#include <QtCore/QTimer>
+#include <QtWidgets/QApplication>
 #include "SLogLib/SLogLib"
 #include "QWidgetLogger.h"
+#include "SLogLib/Formatters/HtmlFormatter.h"
 
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-	
-	QWidgetLogger* _logger = new QWidgetLogger(new SLogLib::DetailedFormatter());
+
+	SLogLib::HtmlFormatter* _formatter = new SLogLib::HtmlFormatter();
+	//_formatter->setBottomMargin(2);
+
+	QWidgetLogger* _logger = new QWidgetLogger(_formatter);
 	_logger->show();
+	
 	SLogLib::addLoggingDevice(_logger);
-	
-	SLOGLIB_LOG_MSG_INFO("Testing 1");
-	SLOGLIB_LOG_MSG_INFO("Testing 2");
-	SLOGLIB_LOG_MSG_INFO("Testing 3");
-	
+	SLOGLIB_LOG_MSG_INFO  ("Testing 1");
+	SLOGLIB_LOG_MSG_WARN  ("Testing 2");
+	SLOGLIB_LOG_MSG_ERROR ("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum");
+	SLOGLIB_LOG_MSG_DEBUG ("Testing 4");
+	SLOGLIB_LOG_MSG_DETAIL("Testing 5");
+
 	return a.exec();
 }

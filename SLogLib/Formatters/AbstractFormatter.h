@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,16 +28,11 @@
 #define _SLOGLIB_ABSTRACTFORMATTER_H_
 
 #include "SLogLib/Message.h"
+#include "SLogLib/Types.h"
 #include <string>
 
 namespace SLogLib {
 ;
-
-enum NewLineFlag
-{
-	DoNotAppendNewLine = 0,
-	AppendNewLine      = 1
-};
 
 ///! The AbstractFormatter class is the base class of all formatters. A formatter formats a 
 ///! Message to a std::string. A logging device uses a formatter to format a message.
@@ -45,15 +40,16 @@ class AbstractFormatter
 {
 public:
 
-	AbstractFormatter(NewLineFlag newLineflag = DoNotAppendNewLine)
+	explicit AbstractFormatter(NewLineFlag newLineflag = DoNotAppendNewLine)
 		: mNewLineFlag(newLineflag)
 	{}
 	
-	virtual ~AbstractFormatter() {}
+	virtual ~AbstractFormatter() = default;
 	
 	///! Format a message to std::string.
 	virtual std::string FormatMessage(const Message& msg) const = 0;
 
+	
 protected:
 
 	NewLineFlag mNewLineFlag;

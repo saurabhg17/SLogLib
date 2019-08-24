@@ -6,12 +6,15 @@ SET(HDRS AddToCallStack.h
          Message.h
          SLogLib.h
          SysUtils.h
+         Types.h
          Devices/AbstractLoggingDevice.h
          Devices/ConsoleLogger.h
          Devices/FileLogger.h
+         Devices/MemoryLogger.h
          Formatters/AbstractFormatter.h
          Formatters/DetailedFormatter.h
          Formatters/ErrorFormatter.h
+         Formatters/HtmlFormatter.h
          Formatters/InfoFormatter.h
          Formatters/NullFormatter.h)
 
@@ -20,7 +23,8 @@ SET(SRCS AddToCallStack.cpp
          SLogLib.cpp
          SysUtils.cpp
          Devices/AbstractLoggingDevice.cpp
-         Devices/FileLogger.cpp)
+         Devices/FileLogger.cpp
+         Devices/MemoryLogger.cpp)
 
 set(RELEASE_MANGLED_NAME "SLogLib-${SLOGLIB_VERSION_MAJOR}.${SLOGLIB_VERSION_MINOR}")
 set(DEBUG_MANGLED_NAME   "SLogLib-${SLOGLIB_VERSION_MAJOR}.${SLOGLIB_VERSION_MINOR}-${SLOGLIB_DEBUG_POSTFIX}")

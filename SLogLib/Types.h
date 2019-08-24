@@ -24,22 +24,28 @@
 // 
 // Author(s): Saurabh Garg
 
-#include "SLogLib/SLogLib"
+#ifndef _SLOGLIB_TYPES_H_
+#define _SLOGLIB_TYPES_H_
 
-int main()
+namespace SLogLib {
+;
+
+// Levels indicating severity of message.
+enum MessageLevel
 {
-	// Add these lines at the beginning of your program.
-	// The devices and formatters are automatically deleted by SLogLib.
-	using namespace SLogLib;
-	addLoggingDevice(new ConsoleLogger(new NullFormatter));
-	addLoggingDevice(new FileLogger("foo.log", FileLogger::Immediately, new DetailedFormatter));
-	
-	// The following line writes the message to both console and file.
-	int a = 10;
-	double b = 15.3;
-	const char* c = "Success";
-	SLOGLIB_LOG_MSG_INFO("a = " << a << " b = " << b);
-	SLOGLIB_LOG_MSG_INFO(c);
-	
-	return 0;
-}
+	eLevelInfo,
+	eLevelWarn,
+	eLevelError,
+	eLevelDebug,
+	eLevelDetail,
+};
+
+enum NewLineFlag
+{
+	DoNotAppendNewLine = 0,
+	AppendNewLine      = 1
+};
+
+};	// End namespace SLogLib.
+
+#endif // _SLOGLIB_TYPES_H_

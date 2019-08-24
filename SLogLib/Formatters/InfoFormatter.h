@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,10 +43,15 @@ namespace SLogLib {
 class InfoFormatter : public AbstractFormatter
 {
 public:
-	
-	inline std::string FormatMessage(const Message& msg) const
+
+	explicit InfoFormatter(NewLineFlag newLineFlag = DoNotAppendNewLine)
+		: AbstractFormatter(newLineFlag)
+	{}
+
+
+	inline std::string FormatMessage(const Message& msg) const override
 	{
-		if(msg.mLevel != MESSAGE_LEVEL_INFO)
+		if(msg.mLevel != eLevelInfo)
 		{
 			return "";
 		}

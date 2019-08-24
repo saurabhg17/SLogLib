@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@
 #include "SLogLib/Config.h"
 #include "SLogLib/AddToCallStack.h"
 #include "SLogLib/Devices/AbstractLoggingDevice.h"
+#include <list>
 
 namespace SLogLib {
 ;
@@ -46,6 +47,18 @@ namespace SLogLib {
 // this class.
 class SLOGLIB_DLL_API LoggingManager
 {
+public:
+
+	~LoggingManager();
+
+	// Disable copying of LoggingManager instances in the client code.
+	// This makes sure there is only one instance of the logger.
+	LoggingManager(const LoggingManager&) = delete;
+	LoggingManager& operator=(const LoggingManager&) = delete;
+	LoggingManager(const LoggingManager&&) = delete;
+    LoggingManager & operator=(const LoggingManager&&) = delete;
+
+	
 public:
 	
 	// Return the only instance of LoggingManager.
@@ -78,31 +91,26 @@ public:
 	void WriteMessage(const std::string& fileName, 
 		              const std::string& funcName, 
 					  unsigned int       lineNumber,
-					  unsigned int       level,
+					  MessageLevel       level,
 					  const std::string& message);
-	
-	// Destruct the logger.
-	~LoggingManager();
 	
 public:
 	
-	inline void EnableLogging() {mIsDisabled = false;}
-	inline void DisableLogging() {mIsDisabled = true;}
-	inline void setIsDisabled(bool d) {mIsDisabled = d;}
-	inline bool isDisabled() const  {return mIsDisabled;}
-	
+	inline void EnableLogging()     {mIsDisabled = false;}
+	inline void DisableLogging()    {mIsDisabled = true;}
+	inline void SetDisabled(bool d) {mIsDisabled = d;}
+	inline bool IsDisabled() const  {return mIsDisabled;}
+
+
 private:
 	
-	// Disable construction and copying of LoggingManager instances in the client code.
-	// This makes sure there is only one instance of the logger.
 	LoggingManager();
-	LoggingManager(const LoggingManager&);
-	LoggingManager& operator=(const LoggingManager&);
-	
+
+
 private:
 	
 	// For storing the list of logging devices.
-	LoggingDeviceList mLoggingDevices;
+	std::list<AbstractLoggingDevice*> mLoggingDevices;
 	
 	// For storing the current call stack.
 	CallStack mCallStack;

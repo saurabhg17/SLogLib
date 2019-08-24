@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -51,11 +51,11 @@
 	}
 	
 	// Convenience macros to write the message at various levels.
-	#define SLOGLIB_LOG_MSG_INFO(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::MESSAGE_LEVEL_INFO   , msg);
-	#define SLOGLIB_LOG_MSG_WARN(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::MESSAGE_LEVEL_WARNING, msg);
-	#define SLOGLIB_LOG_MSG_ERROR(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::MESSAGE_LEVEL_ERROR  , msg);
-	#define SLOGLIB_LOG_MSG_DEBUG(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::MESSAGE_LEVEL_DEBUG  , msg);
-	#define SLOGLIB_LOG_MSG_DETAIL(msg) SLOGLIB_LOG_MESSAGE(SLogLib::MESSAGE_LEVEL_DEBUG  , msg);
+	#define SLOGLIB_LOG_MSG_INFO(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::eLevelInfo  , msg);
+	#define SLOGLIB_LOG_MSG_WARN(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::eLevelWarn  , msg);
+	#define SLOGLIB_LOG_MSG_ERROR(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::eLevelError , msg);
+	#define SLOGLIB_LOG_MSG_DEBUG(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::eLevelDebug , msg);
+	#define SLOGLIB_LOG_MSG_DETAIL(msg) SLOGLIB_LOG_MESSAGE(SLogLib::eLevelDetail, msg);
 	
 	// The macro to add the current function to the call stack.
 	#define SLOGLIB_ADD_TO_CALLSTACK SLogLib::AddToCallStack \
@@ -88,7 +88,7 @@ SLOGLIB_DLL_API AbstractLoggingDevice* queryLoggingDevice(const std::string& nam
 SLOGLIB_DLL_API void writeMessage(const std::string& fileName, 
 	                              const std::string& funcName,
 								  unsigned int       lineNo,
-								  unsigned int       level,
+								  MessageLevel       level,
 								  const std::string& msg);
 
 // Disable and enable logging. These functions are useful when logging has to

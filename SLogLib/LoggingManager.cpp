@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
 
 #include "LoggingManager.h"
 #include "SysUtils.h"
-#include "SysUtils.h"
 
 namespace SLogLib {
 ;
@@ -38,11 +37,8 @@ LoggingManager::LoggingManager()
 }
 LoggingManager::~LoggingManager()
 {
-	// Delete all LoggingDevices.
-	LoggingDeviceList::iterator iter = mLoggingDevices.begin();
-	for( ; iter!=mLoggingDevices.end() ; ++iter)
+	for(AbstractLoggingDevice* _device :  mLoggingDevices)
 	{
-		AbstractLoggingDevice* _device = *iter;
 		delete _device;
 	}
 }
@@ -52,7 +48,7 @@ LoggingManager::~LoggingManager()
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::AddDevice(AbstractLoggingDevice* device)
 {
-	if(!mIsDisabled && device != NULL)
+	if(!mIsDisabled && device != nullptr)
 	{
 		mLoggingDevices.push_back(device);
 	}
@@ -67,8 +63,7 @@ void LoggingManager::RemoveDevice(AbstractLoggingDevice* device)
 	{
 		// We don't have to worry about iter becoming invalid 
 		// since we exit from loop immediately after erasing.
-		LoggingDeviceList::iterator _iter = mLoggingDevices.begin();
-		for( ; _iter!=mLoggingDevices.end() ; ++_iter)
+		for(auto _iter = mLoggingDevices.begin() ; _iter!=mLoggingDevices.end() ; ++_iter)
 		{
 			AbstractLoggingDevice* _device = *_iter;
 			if(device == _device)
@@ -90,8 +85,7 @@ void LoggingManager::RemoveDevice(const std::string& deviceName)
 	{
 		// We don't have to worry about iterator becoming invalid 
 		// since we exit from loop immediately after erasing.
-		LoggingDeviceList::iterator _iter = mLoggingDevices.begin();
-		for( ; _iter!=mLoggingDevices.end() ; ++_iter)
+		for(auto _iter = mLoggingDevices.begin() ; _iter!=mLoggingDevices.end() ; ++_iter)
 		{
 			AbstractLoggingDevice* _device = *_iter;
 			if(deviceName == _device->Name())
@@ -109,15 +103,14 @@ void LoggingManager::RemoveDevice(const std::string& deviceName)
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 AbstractLoggingDevice* LoggingManager::QueryDevice(const std::string& deviceName)
 {
-	LoggingDeviceList::iterator _iter = mLoggingDevices.begin();
-	for(; _iter!=mLoggingDevices.end() ; ++_iter)
+	for(AbstractLoggingDevice* _device : mLoggingDevices)
 	{
-		if(deviceName == (*_iter)->Name())
+		if(deviceName == _device->Name())
 		{
-			return *_iter;
+			return _device;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -150,7 +143,7 @@ void LoggingManager::PopFunction()
 void LoggingManager::WriteMessage(const std::string& fileName, 
 	                              const std::string& funcName,
 								  unsigned int       lineNumber,
-								  unsigned int       level,
+								  MessageLevel       level,
 								  const std::string& message)
 {
 	if(!mIsDisabled)
@@ -169,10 +162,8 @@ void LoggingManager::WriteMessage(const std::string& fileName,
 		
 		// Iterate over all LoggingDevices and write the message
 		// to the enabled devices.
-		LoggingDeviceList::iterator iter = mLoggingDevices.begin();
-		for( ; iter!=mLoggingDevices.end() ; ++iter)
+		for(AbstractLoggingDevice* _device : mLoggingDevices)
 		{
-			AbstractLoggingDevice* _device = *iter;
 			if(_device->IsEnabled())
 			{
 				_device->WriteMessage(_message);

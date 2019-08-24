@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@
 #include "SLogLib/Message.h"
 #include "SLogLib/Formatters/AbstractFormatter.h"
 #include <string>
-#include <list>
 #include <vector>
 
 namespace SLogLib {
@@ -50,19 +49,18 @@ namespace SLogLib {
 // 
 // A logging device can be enabled or disabled. A disabled device ignore all messages sent to it.
 // A device is enabled by default.
-// Related functions: Enable(), Disable(), IsEnabled(), and SetIsEnabled().
+// Related functions: Enable(), Disable(), IsEnabled(), and SetEnabled().
 // 
 // It is possible to buffer a number of messages before sending them to the device for writing. 
 // A device is not buffered by default. Buffering can be enabled or disabled by 
-// EnableBuffering() and DisableBuffering(). There is also a more general function SetIsBuffered(). 
-// The number of messages buffered (default: 1000) is specified by SetNumBufferedMessages().
+// EnableBuffering() and DisableBuffering(). There is also a more general function SetBuffered(). 
+// The number of messages buffered (default: 1000) is specified by SetBufferedMessagesCount().
 class SLOGLIB_DLL_API AbstractLoggingDevice
 {
 public:
 	
-	AbstractLoggingDevice(AbstractFormatter* formatter);
+	explicit AbstractLoggingDevice(AbstractFormatter* formatter);
 	AbstractLoggingDevice(AbstractFormatter* formatter, const std::string& name);
-	AbstractLoggingDevice(AbstractFormatter* formatter, const std::string& name, bool isEnabled, bool isBuffered, size_t numBufferedMessages);
 	virtual ~AbstractLoggingDevice();
 	
 	// Format the message and write it to the device.
@@ -70,23 +68,25 @@ public:
 	// This function is called by the LoggingManager to write a message to the device.
 	void WriteMessage(const Message& message);
 	
+
 public: // Getters and setters.
 	
 	inline std::string Name() const {return mName;}
 	
-	inline void Enable()  {SetIsEnabled(true);}
-	inline void Disable() {SetIsEnabled(false);}
+	inline void Enable()          {SetEnabled(true);}
+	inline void Disable()         {SetEnabled(false);}
 	inline bool IsEnabled() const {return mIsEnabled;}
-	void SetIsEnabled(bool x);
+	void SetEnabled(bool x);
 	
-	inline void EnableBuffering()  {SetIsBuffered(true);}
-	inline void DisableBuffering() {SetIsBuffered(false);}
+	inline void EnableBuffering()  {SetBuffered(true);}
+	inline void DisableBuffering() {SetBuffered(false);}
 	inline bool IsBuffered() const {return mIsBuffered;}
-	void SetIsBuffered(bool x);
+	void SetBuffered(bool x);
 	
-	inline size_t numBufferedMessages() const {return mNumBufferedMessages;}
-	void SetNumBufferedMessages(size_t x);
+	inline size_t BufferedMessagesCount() const {return mBufferedMessagesCount;}
+	void SetBufferedMessagesCount(size_t x);
 	
+
 protected:
 	
 	// Write a single message to the logging device.
@@ -102,19 +102,27 @@ protected:
 	// For a buffered device, concrete class must call this in the destructor to ensure 
 	// all messages are written to the device.
 	void _FlushBufferedMessages();
-	
+
+
+public: // Disable copying.
+
+	// Delete copy constructor and assignment operator.
+	AbstractLoggingDevice(const AbstractLoggingDevice&) = delete;
+    AbstractLoggingDevice & operator=(const AbstractLoggingDevice&) = delete;
+
+	// Delete move constructor and assignment operator.
+	AbstractLoggingDevice(const AbstractLoggingDevice&&) = delete;
+    AbstractLoggingDevice & operator=(const AbstractLoggingDevice&&) = delete;
+
 private:
 	
 	AbstractFormatter*       mFormatter;
 	std::string              mName;
-	bool                     mIsEnabled; // Default: true
-	bool                     mIsBuffered; // Default: false
-	size_t                   mNumBufferedMessages; // Default: 1000
+	bool                     mIsEnabled;             // Default: true
+	bool                     mIsBuffered;            // Default: false
+	size_t                   mBufferedMessagesCount; // Default: 1000
 	std::vector<std::string> mBufferedMessages;
 };
-
-// Define a type for storing logging devices.
-typedef std::list<AbstractLoggingDevice*> LoggingDeviceList;
 
 };	// End namespace SLogLib.
 

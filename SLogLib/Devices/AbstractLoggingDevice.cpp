@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,21 +33,18 @@ namespace SLogLib {
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 AbstractLoggingDevice::AbstractLoggingDevice(AbstractFormatter* formatter)
-	: mFormatter(formatter), mIsEnabled(true), mIsBuffered(false), mNumBufferedMessages(1000)
+	: mFormatter(formatter), mIsEnabled(true), mIsBuffered(false), mBufferedMessagesCount(1000)
 {
+	assert(mFormatter);
 	static int _deviceID = 1;
 	mName = "LoggingDevice" + SLogLib::toString(_deviceID++);
-	mBufferedMessages.reserve(mNumBufferedMessages);
+	mBufferedMessages.reserve(mBufferedMessagesCount);
 }
 AbstractLoggingDevice::AbstractLoggingDevice(AbstractFormatter* formatter, const std::string& name)
-	: mFormatter(formatter), mName(name), mIsEnabled(true), mIsBuffered(false), mNumBufferedMessages(1000)
+	: mFormatter(formatter), mName(name), mIsEnabled(true), mIsBuffered(false), mBufferedMessagesCount(1000)
 {
-	mBufferedMessages.reserve(mNumBufferedMessages);
-}
-AbstractLoggingDevice::AbstractLoggingDevice(AbstractFormatter* formatter, const std::string& name, bool isEnabled, bool isBuffered, size_t numBufferedMessages)
-	: mFormatter(formatter), mName(name), mIsEnabled(isEnabled), mIsBuffered(isBuffered), mNumBufferedMessages(numBufferedMessages)
-{
-	mBufferedMessages.reserve(mNumBufferedMessages);
+	assert(mFormatter);
+	mBufferedMessages.reserve(mBufferedMessagesCount);
 }
 AbstractLoggingDevice::~AbstractLoggingDevice()
 {
@@ -59,22 +56,23 @@ AbstractLoggingDevice::~AbstractLoggingDevice()
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void AbstractLoggingDevice::WriteMessage(const Message& message)
 {
-	if(mIsEnabled && mFormatter!=0)
+	if(mIsEnabled)
 	{
+		std::string _formattedMessage = mFormatter->FormatMessage(message);
 		if(mIsBuffered)
 		{
-			if(mBufferedMessages.size() < mNumBufferedMessages)
+			if(mBufferedMessages.size() < mBufferedMessagesCount)
 			{
-				mBufferedMessages.push_back(mFormatter->FormatMessage(message));
+				mBufferedMessages.emplace_back(_formattedMessage);
 			}
-			if(mBufferedMessages.size() == mNumBufferedMessages)
+			if(mBufferedMessages.size() == mBufferedMessagesCount)
 			{
 				_FlushBufferedMessages();
 			}
 		}
 		else
 		{
-			_WriteMessage(mFormatter->FormatMessage(message));
+			_WriteMessage(_formattedMessage);
 		}
 	}
 }
@@ -82,7 +80,7 @@ void AbstractLoggingDevice::WriteMessage(const Message& message)
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void AbstractLoggingDevice::SetIsEnabled(bool x)
+void AbstractLoggingDevice::SetEnabled(bool x)
 {
 	mIsEnabled = x;
 	
@@ -96,7 +94,7 @@ void AbstractLoggingDevice::SetIsEnabled(bool x)
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void AbstractLoggingDevice::SetIsBuffered(bool x)
+void AbstractLoggingDevice::SetBuffered(bool x)
 {
 	mIsBuffered = x;
 	
@@ -110,13 +108,13 @@ void AbstractLoggingDevice::SetIsBuffered(bool x)
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void AbstractLoggingDevice::SetNumBufferedMessages(size_t x)
+void AbstractLoggingDevice::SetBufferedMessagesCount(size_t x)
 {
-	if(x > mNumBufferedMessages)
+	if(x > mBufferedMessagesCount)
 	{
 		mBufferedMessages.reserve(x);
 	}
-	mNumBufferedMessages = x;
+	mBufferedMessagesCount = x;
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -124,9 +122,9 @@ void AbstractLoggingDevice::SetNumBufferedMessages(size_t x)
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void AbstractLoggingDevice::_WriteMessages(const std::vector<std::string>& messages)
 {
-	for(size_t i=0 ; i<messages.size() ; ++i)
+	for(const std::string& _message : messages)
 	{
-		_WriteMessage(messages[i]);
+		_WriteMessage(_message);
 	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -140,4 +138,4 @@ void AbstractLoggingDevice::_FlushBufferedMessages()
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-};	// End namespace SLogLib.
+}	// End namespace SLogLib.

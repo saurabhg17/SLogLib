@@ -47,6 +47,8 @@ set_property(CACHE SLOGLIB_USE_QT_VERSION PROPERTY STRINGS Qt5 Qt4)
 # Don't use CMake defined suffix; otherwise CMake adds an extra suffix at the end.
 set(CMAKE_DEBUG_POSTFIX)
 
+#set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/Install)
+
 # First build the SLogLib and then all examples.
 add_subdirectory (SLogLib)
 

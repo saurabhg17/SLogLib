@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,32 +31,29 @@ namespace SLogLib {
 ;
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-FileLogger::FileLogger(const std::string& fileName, AbstractFormatter* formatter)
-	: AbstractLoggingDevice(formatter)
+FileLogger::FileLogger(const std::string& fileName, OpenFlag flag, AbstractFormatter* formatter)
+	: AbstractLoggingDevice(formatter), mFileName(fileName), mHasAutoFlush(false), mHasDelay(false), mDelayAmount(10), mFileOpenFlag(flag)
 {
-	_Initialize(fileName);
+	if(mFileOpenFlag == Immediately)
+	{
+		mFileHandle.open(fileName.c_str());
+	}
 }
-FileLogger::FileLogger(const std::string& fileName, AbstractFormatter* formatter, const std::string& name) 
-		: AbstractLoggingDevice(formatter, name)
+FileLogger::FileLogger(const std::string& fileName, OpenFlag flag, AbstractFormatter* formatter, const std::string& name) 
+	: AbstractLoggingDevice(formatter, name), mFileName(fileName), mHasAutoFlush(false), mHasDelay(false), mDelayAmount(10), mFileOpenFlag(flag)
 {
-	_Initialize(fileName);
-}
-FileLogger::FileLogger(const std::string& fileName, AbstractFormatter* formatter, const std::string& name, bool isEnabled, bool isBuffered, size_t numBufferedMessages)
-	: AbstractLoggingDevice(formatter, name, isEnabled, isBuffered, numBufferedMessages)
-{
-	_Initialize(fileName);
-}
-void FileLogger::_Initialize(const std::string& fileName)
-{
-	mFileHandle.open(fileName.c_str());
-	mHasAutoFlush = false;
-	mHasDelay     = false;
-	mDelayAmount  = 10; // ms.
+	if(mFileOpenFlag == Immediately)
+	{
+		mFileHandle.open(fileName.c_str());
+	}
 }
 FileLogger::~FileLogger()
 {
-	_FlushBufferedMessages();
-	mFileHandle.close();
+	if(mFileHandle)
+	{
+		_FlushBufferedMessages();
+		mFileHandle.close();
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -72,11 +69,16 @@ void FileLogger::FlushDevice()
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void FileLogger::_WriteMessage(const std::string& message)
 {
+	if(!mFileHandle)
+	{
+		mFileHandle.open(mFileName.c_str());
+	}
+
 	if(mHasDelay)
 	{
 		SLogLib::sleep(mDelayAmount);
 	}
-	
+
 	mFileHandle << message;
 	
 	if(mHasAutoFlush)
@@ -90,14 +92,19 @@ void FileLogger::_WriteMessage(const std::string& message)
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void FileLogger::_WriteMessages(const std::vector<std::string>& messages)
 {
+	if(!mFileHandle)
+	{
+		mFileHandle.open(mFileName.c_str());
+	}
+
 	if(mHasDelay)
 	{
 		SLogLib::sleep(mDelayAmount);
 	}
 	
-	for(size_t i=0 ; i<messages.size() ; ++i)
+	for(const std::string& _message : messages)
 	{
-		mFileHandle << messages[i];
+		mFileHandle << _message;
 	}
 	
 	if(mHasAutoFlush)
@@ -107,4 +114,4 @@ void FileLogger::_WriteMessages(const std::vector<std::string>& messages)
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-};	// End namespace SLogLib.
+}	// End namespace SLogLib.

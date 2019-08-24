@@ -24,22 +24,44 @@
 // 
 // Author(s): Saurabh Garg
 
-#include "SLogLib/SLogLib"
+#include "QWidgetLogger.h"
 
-int main()
+using namespace SLogLib;
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+QWidgetLogger::QWidgetLogger(AbstractFormatter* formatter)
+	: AbstractLoggingDevice(formatter)
 {
-	// Add these lines at the beginning of your program.
-	// The devices and formatters are automatically deleted by SLogLib.
-	using namespace SLogLib;
-	addLoggingDevice(new ConsoleLogger(new NullFormatter));
-	addLoggingDevice(new FileLogger("foo.log", FileLogger::Immediately, new DetailedFormatter));
-	
-	// The following line writes the message to both console and file.
-	int a = 10;
-	double b = 15.3;
-	const char* c = "Success";
-	SLOGLIB_LOG_MSG_INFO("a = " << a << " b = " << b);
-	SLOGLIB_LOG_MSG_INFO(c);
-	
-	return 0;
+	_Initialize();
 }
+QWidgetLogger::QWidgetLogger(AbstractFormatter* formatter, const std::string& name)
+	: AbstractLoggingDevice(formatter, name)
+{
+	_Initialize();
+}
+QWidgetLogger::~QWidgetLogger()
+{
+	AbstractLoggingDevice::_FlushBufferedMessages();
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+void QWidgetLogger::_Initialize()
+{
+	QTextEdit::setReadOnly(true);
+	
+	QFont font("Monospace");
+	font.setStyleHint(QFont::TypeWriter);
+	font.setPointSize(12);
+	setFont(font);
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+void QWidgetLogger::_WriteMessage(const std::string& message)
+{
+	QTextEdit::append(QString(message.c_str()));
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //

@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -38,16 +38,15 @@ class ConsoleLogger : public AbstractLoggingDevice
 {
 public:
 	
-	ConsoleLogger(AbstractFormatter* formatter) 
+	explicit ConsoleLogger(AbstractFormatter* formatter) 
 		: AbstractLoggingDevice(formatter) {}
-	ConsoleLogger(AbstractFormatter* formatter, const std::string& name) 
+	explicit ConsoleLogger(AbstractFormatter* formatter, const std::string& name) 
 		: AbstractLoggingDevice(formatter, name) {}
-	ConsoleLogger(AbstractFormatter* formatter, const std::string& name, bool isEnabled, bool isBuffered, size_t numBufferedMessages)
-		: AbstractLoggingDevice(formatter, name, isEnabled, isBuffered, numBufferedMessages) {}
-	
+
+
 protected:
 	
-	inline void _WriteMessage(const std::string& message)
+	inline void _WriteMessage(const std::string& message) override
 	{
 		std::cout << message;
 	}

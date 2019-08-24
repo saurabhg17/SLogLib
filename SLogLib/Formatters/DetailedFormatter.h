@@ -2,7 +2,7 @@
 // This file is part of SLogLib; you can redistribute it and/or
 // modify it under the terms of the MIT License.
 // 
-// Copyright (c) 2015 Saurabh Garg
+// Copyright (c) 2018 Saurabh Garg
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,12 +53,16 @@ namespace SLogLib {
 class DetailedFormatter : public AbstractFormatter
 {
 public:
-	
-	inline std::string FormatMessage(const Message& msg) const
+
+	explicit DetailedFormatter(NewLineFlag newLineFlag = DoNotAppendNewLine)
+		: AbstractFormatter(newLineFlag)
+	{}
+
+
+	inline std::string FormatMessage(const Message& msg) const override
 	{
-		size_t _size = msg.mCallStack->size();
-		CallInfo _callInfo;
-		_callInfo = (*msg.mCallStack)[_size-1];
+		size_t   _size     = msg.mCallStack->size();
+		CallInfo _callInfo = (*msg.mCallStack)[_size-1];
 		
 		std::ostringstream _stream;
 		_stream << "Msg Level  : " << msg.mLevel                  << std::endl;
@@ -78,18 +82,18 @@ public:
 		
 		for(size_t i=0 ; i<msg.mCallStack->size() ; ++i)
 		{
-			CallInfo _callInfo = (*msg.mCallStack)[i];
+			CallInfo _callInfo1 = (*msg.mCallStack)[i];
 			
 			if(i==0)
 			{
-				_stream << _callInfo.mFileName;
+				_stream << _callInfo1.mFileName;
 			}
 			else
 			{
-				_stream << "             " << _callInfo.mFileName;
+				_stream << "             " << _callInfo1.mFileName;
 			}
-			_stream << " : " << _callInfo.mFuncName;
-			_stream << " [" << _callInfo.mLineNumber << "]" << std::endl;
+			_stream << " : " << _callInfo1.mFuncName;
+			_stream << " [" << _callInfo1.mLineNumber << "]" << std::endl;
 		}
 		
 		_stream << "Message    : " << msg.mUserMessage << std::endl << std::endl;

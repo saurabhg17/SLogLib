@@ -3,7 +3,7 @@
 // modify it under the terms of the MIT License.
 // 
 // Copyright (c) 2018 Saurabh Garg
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -24,44 +24,56 @@
 // 
 // Author(s): Saurabh Garg
 
-#ifndef _SLOGLIB_CALLINFO_H_
-#define _SLOGLIB_CALLINFO_H_
+#ifndef _SLOGLIB_MEMORYLOGGER_H_
+#define _SLOGLIB_MEMORYLOGGER_H_
 
-#include <string>
-#include <vector>
+#include "SLogLib/Config.h"
+#include "SLogLib/Devices/AbstractLoggingDevice.h"
+#include <list>
 
 namespace SLogLib {
 ;
 
-// The CallInfo structure stores the information of a single function call.
-struct CallInfo
+// The FileLogger class writes logging messages to the memory. This is usefule when log need to be 
+// available after the problem ends.
+class SLOGLIB_DLL_API MemoryLogger : public AbstractLoggingDevice
 {
 public:
 	
-	CallInfo()
-		: mLineNumber(0)
-	{}
-	CallInfo(const std::string& fileName, const std::string& funcName, unsigned int lineNumber)
-		: mFileName(fileName), mFuncName(funcName), mLineNumber(lineNumber)
-	{}
+	MemoryLogger(AbstractFormatter* formatter);
+	MemoryLogger(AbstractFormatter* formatter, const std::string& name);
 	
-	bool operator != (const CallInfo& B) const
-	{
-		return !(B.mFileName==mFileName && B.mFuncName==mFuncName && B.mLineNumber==mLineNumber);
-	}
+	std::string allMessages() const;
+
+	inline std::list<std::string> messages() const {return mMessages;}
+
+private:
+	
+	void _WriteMessage(const std::string& message) override;
 
 
-public:
+private:
+
+	// There is no point buffering message for a memory logger.
+	void EnableBuffering() {}
+	void SetBuffered(bool) {}
+
+
+public: // Disable copying.
+
+	// Delete copy constructor and assignment operator.
+	MemoryLogger(const MemoryLogger&) = delete;
+    MemoryLogger & operator=(const MemoryLogger&) = delete;
 	
-	std::string  mFileName;    // The name of the file containing the function.
-	std::string  mFuncName;    // The name of the function.
-	unsigned int mLineNumber;  // The line number at which SLOGLIB_ADD_TO_CALLSTACK macro was 
-	                           // inserted in the function.
+	// Delete move constructor and assignment operator.
+	MemoryLogger(const MemoryLogger&&) = delete;
+    MemoryLogger & operator=(const MemoryLogger&&) = delete;
+
+private:
+
+	std::list<std::string> mMessages;
 };
-
-// Define a type for storing array of CallInfo's forming a CallStack.
-typedef std::vector<CallInfo> CallStack;
 
 };	// End namespace SLogLib.
 
-#endif // _SLOGLIB_CALLINFO_H_
+#endif // _SLOGLIB_MEMORYLOGGER_H_
