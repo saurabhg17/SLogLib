@@ -23,10 +23,26 @@ if(WIN32)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
 endif()
 
-add_executable(QWidgetLoggerDemo QWidgetLogger.h QWidgetLogger.cpp Main.cpp)
+set(RELEASE_MANGLED_NAME "QWidgetLoggerDemo")
+set(DEBUG_MANGLED_NAME   "QWidgetLoggerDemo${SLOGLIB_DEBUG_POSTFIX}")
 
+add_executable(QWidgetLoggerDemo ../../Contrib/QWidgetLogger/QWidgetLogger.h ../../Contrib/QWidgetLogger/QWidgetLogger.cpp Main.cpp)
+target_include_directories(QWidgetLoggerDemo PRIVATE ../../Contrib/QWidgetLogger)
+
+# Set the name of targets based on configurations.
+set_target_properties(QWidgetLoggerDemo PROPERTIES 
+                        OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}" 
+						OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}" 
+						OUTPUT_NAME_MINSIZEREL     "${RELEASE_MANGLED_NAME}" 
+						OUTPUT_NAME_RELWITHDEBINFO "${RELEASE_MANGLED_NAME}")
+						
 if(SLOGLIB_USE_QT_VERSION STREQUAL Qt5)
 	target_link_libraries(QWidgetLoggerDemo SLogLib Qt5::Widgets)
 elseif(SLOGLIB_USE_QT_VERSION STREQUAL Qt4)
 	target_link_libraries(QWidgetLoggerDemo SLogLib ${QT_LIBRARIES})
 endif()
+
+install(TARGETS QWidgetLoggerDemo
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

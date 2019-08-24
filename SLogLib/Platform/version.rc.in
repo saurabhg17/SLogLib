@@ -1,5 +1,5 @@
 
-#include "afxres.h"
+#include "Windows.h"
 
 #ifndef DEBUG
 	#define VER_DEBUG 0
