@@ -1,60 +1,31 @@
-
-// This file is part of SLogLib; you can redistribute it and/or
+// 
+// This file is part of SLogLib; you can redistribute it and/or 
 // modify it under the terms of the MIT License.
+// Author: Saurabh Garg (saurabhgarg@mysoc.net)
 // 
-// Copyright (c) 2018 Saurabh Garg
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-// 
-// Author(s): Saurabh Garg
 
+#include <QtCore/QThread>
+#include <QtWidgets/QScrollBar>
+#include "SLogLib/SLogLib.h"
 #include "QWidgetLogger.h"
 
 using namespace SLogLib;
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-QWidgetLogger::QWidgetLogger(AbstractFormatter* formatter)
+QWidgetLogger::QWidgetLogger(SLogLib::AbstractFormatter* formatter)
 	: AbstractLoggingDevice(formatter)
 {
-	_Initialize();
+	mLogTextEdit = new SLogTextEdit();
 }
-QWidgetLogger::QWidgetLogger(AbstractFormatter* formatter, const std::string& name)
-	: AbstractLoggingDevice(formatter, name)
+QWidgetLogger::QWidgetLogger(SLogLib::AbstractFormatter* formatter, const std::string& name)
+	: AbstractLoggingDevice(formatter, name), mLogTextEdit(nullptr)
 {
-	_Initialize();
+	mLogTextEdit = new SLogTextEdit();
 }
 QWidgetLogger::~QWidgetLogger()
 {
+	//mLogTextEdit is automatically deleted by Qt.
 	AbstractLoggingDevice::_FlushBufferedMessages();
-}
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void QWidgetLogger::_Initialize()
-{
-	QTextEdit::setReadOnly(true);
-	
-	QFont font("Monospace");
-	font.setStyleHint(QFont::TypeWriter);
-	font.setPointSize(12);
-	setFont(font);
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -62,6 +33,56 @@ void QWidgetLogger::_Initialize()
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void QWidgetLogger::_WriteMessage(const std::string& message)
 {
-	QTextEdit::append(QString(message.c_str()));
+	mLogTextEdit->_WriteMessage(message);
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+SLogTextEdit::SLogTextEdit(QWidget* parent) : QTextEdit(parent)
+{
+	setReadOnly(true);
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	setAcceptRichText(false);
+	setContextMenuPolicy(Qt::NoContextMenu);
+	setUndoRedoEnabled(false);
+
+	QFont font("Monospace");
+	font.setStyleHint(QFont::TypeWriter);
+	font.setPointSize(12);
+	setFont(font);
+
+	connect(this, SIGNAL(WriteMessageInMainThread(const QString&)), this, SLOT(WriteMessage(const QString&)));
+}
+void SLogTextEdit::_WriteMessage(const std::string& message)
+{
+	QString _message = message.c_str();
+	
+	// In Qt, any UI element such as QTextEdit can only be updated from the 
+	// main thread i.e the thread in which QEventLoop is running. Here we check,
+	// if the current thread is the thread which created this QTextEdit. If it is not,
+	// then emit a signal which is connected to the WriteMessage(const QString&) slot.
+	// Since, slots are always received in the main thread, message can be logged successfully.
+	if(QThread::currentThread() != thread())
+	{
+		emit WriteMessageInMainThread(_message);
+	}
+	else
+	{
+		WriteMessage(_message);
+	}
+}
+void SLogTextEdit::WriteMessage(const QString& message)
+{
+	Q_ASSERT(QThread::currentThread() == thread());
+
+	append(message);
+
+	QScrollBar* _scrollBar = verticalScrollBar();
+	if(_scrollBar)
+	{
+		_scrollBar->setValue(_scrollBar->maximum());
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //

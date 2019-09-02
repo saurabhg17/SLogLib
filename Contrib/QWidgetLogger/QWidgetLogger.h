@@ -1,55 +1,75 @@
-
-// This file is part of SLogLib; you can redistribute it and/or
+// 
+// This file is part of SLogLib; you can redistribute it and/or 
 // modify it under the terms of the MIT License.
+// Author: Saurabh Garg (saurabhgarg@mysoc.net)
 // 
-// Copyright (c) 2018 Saurabh Garg
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-// 
-// Author(s): Saurabh Garg
 
-#ifndef _QWIDGETLOGGER_H_
-#define _QWIDGETLOGGER_H_
+#ifndef _SLOGLIB_QWIDGETLOGGER_H_
+#define _SLOGLIB_QWIDGETLOGGER_H_
 
+#include <string>
 #include <QtWidgets/QTextEdit>
 #include "SLogLib/Devices/AbstractLoggingDevice.h"
-#include <string>
 
-class QWidgetLogger : public QTextEdit, public SLogLib::AbstractLoggingDevice
+// Forward declaration.
+class QWidgetLogger;
+
+// The SLogTextEdit class derives from QTextEdit to provide a widget for displaying 
+// logging messages to the user. A good place to use this widget is in a QDockWiget.
+// As SLogTextEdit derives from QTextEdit, any property from QWidget can be changed
+// easily.
+// 
+// This class is thread-safe and message can to written to it from any thread and not 
+// just the main-thread (i.e. the thread running QEventLoop).
+class SLogTextEdit : public QTextEdit
 {
 	Q_OBJECT
+	friend class QWidgetLogger;
+
 	
 public:
 	
-	explicit QWidgetLogger(SLogLib::AbstractFormatter* formatter);
-	explicit QWidgetLogger(SLogLib::AbstractFormatter* formatter, const std::string& name);
-	~QWidgetLogger();
-
-	QWidgetLogger(const QWidgetLogger&) = delete;
-    QWidgetLogger & operator=(const QWidgetLogger&) = delete;
-	QWidgetLogger(const QWidgetLogger&&) = delete;
-    QWidgetLogger & operator=(const QWidgetLogger&&) = delete;
+	explicit SLogTextEdit(QWidget* parent=nullptr);
+	
 
 private:
 	
-	void _WriteMessage(const std::string& message) override;
-	void _Initialize();
+	void _WriteMessage(const std::string& message);
+
+
+private slots:
+	
+	void WriteMessage(const QString& message);
+
+
+signals:
+	
+	void WriteMessageInMainThread(const QString& message);
 };
 
-#endif // _QWIDGETLOGGER_H_
+// The QWidgetLogger class is a logging device which writes messages to a SLogTextEdit.
+// The widget() returns the widget to be added to UI to show log messages.
+class QWidgetLogger : public SLogLib::AbstractLoggingDevice
+{
+	Q_DISABLE_COPY(QWidgetLogger)
+	
+public:
+
+	explicit QWidgetLogger(SLogLib::AbstractFormatter* formatter);
+	QWidgetLogger(SLogLib::AbstractFormatter* formatter, const std::string& name);
+	~QWidgetLogger();
+
+	SLogTextEdit* widget() const {return mLogTextEdit;}
+
+
+private:
+
+	void _WriteMessage(const std::string& message) override;
+	
+
+private:
+
+	SLogTextEdit* mLogTextEdit;
+};
+
+#endif // _SLOGLIB_QWIDGETLOGGER_H_
