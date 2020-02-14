@@ -24,7 +24,6 @@ QWidgetLogger::QWidgetLogger(SLogLib::AbstractFormatter* formatter, const std::s
 }
 QWidgetLogger::~QWidgetLogger()
 {
-	//mLogTextEdit is automatically deleted by Qt.
 	AbstractLoggingDevice::_FlushBufferedMessages();
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
