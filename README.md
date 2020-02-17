@@ -1,9 +1,10 @@
 # SLogLib
 SLogLib is easy to use, fully customizable and extensible, cross-platform logging library. The important features of SLogLib are:
 
-* Supports user defined formatting of messages.
-* Supports multiple logging devices including console, file, and widgets.
+* User defined formatting of messages.
+* Multiple logging devices including console, file, memory buffer, and Qt widgets.
 * Supports call stack.
+* Multi-threaded logging.
 
 ## Getting Started
 Following is the minimum code required to start using SLogLib:
@@ -30,7 +31,7 @@ void main()
 The first line adds a console logging device to SLogLib. Logging devices use formatters to format the messages before writing them to the underlying device. Here, a `NullFormatter` is used which does nothing. Output on the console looks like this:
 > a = 10 b = 15.3Success
 
-Note that both messages are written to the same line. That's because the `NullFormatter` doesn't add a new line after every message. You can either add new line to each message yourself or pass `AppendNewLine` argument to `NullFormatter's` constructor to automatically add new line after every message.
+Note that both messages are written to the same line. That's because the `NullFormatter` doesn't add a new line after every message. You can either add new line to each message yourself or pass `NewLine::Yes` to `NullFormatter's` constructor to automatically add a new line after every message.
 
 SLogLib can write a message to multiple logging devices. The second line adds a file logging device and uses a detailed formatter to write the message. Here is the first message written to the file:
 
@@ -59,7 +60,7 @@ Message    : a = 10 b = 15.3
 ```c++
 #define SLOGLIB_DISABLE_LOGGING
 ```
-Disables all logging code at the compile time. This can be used to disable logging completely from the production builds. If is best to define this using the compiler arguments. If you wish to disable logging at the runtime use disableLogging() and enableLogging().
+Disables all logging code at the compile time. This can be used to disable logging completely from the production builds. It is best to define this using the compiler arguments. If you wish to disable logging at the runtime use disableLogging() and enableLogging().
 
 ```c++
 #define SLOGLIB_LOG_MESSAGE(level, msg)
@@ -116,7 +117,8 @@ bool SLogLib::isLoggingEnabled();
 Disable and enable logging at runtime. While logging is disabled all messages are ignored and they will not be written to logging devices once logging is enabled again.
 
 ### Notes
-You should also read comments in AbstractLoggingDevice.h and AbstractFormatter.h to learn their API. They are well commented and should be easy to understand.
+* You should also read comments in AbstractLoggingDevice.h and AbstractFormatter.h to learn their API.
+* SLogLib is thread-safe and devices can be added or removed safely from multiple threads. The SLogLib::writeMessage() is also thread-safe and messages can be logged from different threads at the same time.
 
 ## Building SLogLib
 SLogLib uses cmake (http://www.cmake.org) to generate the files needed by the build tools such as GNU Make, Visual Studio, XCode, etc. If you are new to cmake, you should read Running CMake tutorial (http://www.cmake.org/runningcmake/). 
@@ -156,12 +158,13 @@ All formatters are derived from `AbstractFormatter` class. If you wish to write 
 * `NullFormatter`
 * `InfoFormatter`
 * `ErrorFormatter`
+* `HtmlFormatter`
 * `DetailedFormatter`
 
 `NullFormatter` simply outputs the user message. `InfoFormatter`, `ErrorFormatter`, and `DetailedFormatter` formats only messages which are at or below their messages levels.
 
 ### Logging devices write strings to devices
-All logging devices inherit from `AbstractLoggingDevice`. SLogLib comes with a `ConsoleLogger` (std::cout) and `FileLogger` (std::ofstream). To create a new logging device simply inherit from the `AbstractLoggingDevice` and override `_WriteMessage()`. For more details see AbstractLoggingDevice.h.
+All logging devices inherit from `AbstractLoggingDevice`. SLogLib comes with a `ConsoleLogger` (std::cout), `FileLogger` (std::ofstream), `MemoryLogger` (std::vector&lt;std::string&gt;), and `QWidgetLogger` (QTextEdit). To create a new logging device simply inherit from the `AbstractLoggingDevice` and override `_WriteMessage()`. For more details see AbstractLoggingDevice.h.
 
 ## Authors
 Saurabh Garg (saurabhgarg@mysoc.net)
