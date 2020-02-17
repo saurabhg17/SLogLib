@@ -6,7 +6,9 @@
 
 #include "AbstractLoggingDevice.h"
 #include "SLogLib/SysUtils.h"
+#include <atomic>
 #include <cassert>
+#include <iomanip>
 
 namespace SLogLib {
 ;
@@ -16,9 +18,12 @@ AbstractLoggingDevice::AbstractLoggingDevice(AbstractFormatter* formatter)
 	: mFormatter(formatter), mIsEnabled(true), mIsBuffered(false), mBufferedMessagesCount(1000)
 {
 	assert(mFormatter);
-	static int _deviceID = 1;
-	mName = "LoggingDevice" + SLogLib::toString(_deviceID++);
 	mBufferedMessages.reserve(mBufferedMessagesCount);
+
+	static std::atomic_int _deviceID = 1;
+	std::ostringstream _stream;
+	_stream << "LoggingDevice_" << std::setfill('0') << std::setw(3) << _deviceID++;
+	mName = _stream.str();
 }
 AbstractLoggingDevice::AbstractLoggingDevice(AbstractFormatter* formatter, const std::string& name)
 	: mFormatter(formatter), mName(name), mIsEnabled(true), mIsBuffered(false), mBufferedMessagesCount(1000)
@@ -41,6 +46,9 @@ void AbstractLoggingDevice::WriteMessage(const Message& message)
 		std::string _formattedMessage = mFormatter->FormatMessage(message);
 		if(mIsBuffered)
 		{
+			// Use a recursive lock as we need to lock again in _FlushBufferedMessages().
+			std::lock_guard<std::recursive_mutex> _lock(mBufferedMessagesMutex);
+
 			if(mBufferedMessages.size() < mBufferedMessagesCount)
 			{
 				mBufferedMessages.emplace_back(_formattedMessage);
@@ -52,6 +60,7 @@ void AbstractLoggingDevice::WriteMessage(const Message& message)
 		}
 		else
 		{
+			// Calls overridden _WriteMessage() in the child class.
 			_WriteMessage(_formattedMessage);
 		}
 	}
@@ -90,10 +99,8 @@ void AbstractLoggingDevice::SetBuffered(bool x)
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void AbstractLoggingDevice::SetBufferedMessagesCount(size_t x)
 {
-	if(x > mBufferedMessagesCount)
-	{
-		mBufferedMessages.reserve(x);
-	}
+	std::lock_guard<std::recursive_mutex> _lock(mBufferedMessagesMutex);
+	mBufferedMessages.reserve(x);
 	mBufferedMessagesCount = x;
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -113,7 +120,11 @@ void AbstractLoggingDevice::_WriteMessages(const std::vector<std::string>& messa
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void AbstractLoggingDevice::_FlushBufferedMessages()
 {
-	_WriteMessages(mBufferedMessages);
+	std::lock_guard<std::recursive_mutex> _lock(mBufferedMessagesMutex);
+	for(const std::string& _message : mBufferedMessages)
+	{
+		_WriteMessage(_message);
+	}
 	mBufferedMessages.clear();
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //

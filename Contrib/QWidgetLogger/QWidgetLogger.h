@@ -45,6 +45,7 @@ private slots:
 signals:
 	
 	void WriteMessageInMainThread(const QString& message);
+
 };
 
 // The QWidgetLogger class is a logging device which writes messages to a SLogTextEdit.

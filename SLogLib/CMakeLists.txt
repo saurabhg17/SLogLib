@@ -47,7 +47,7 @@ set_target_properties(SLogLib PROPERTIES
 						OUTPUT_NAME_MINSIZEREL     "${RELEASE_MANGLED_NAME}" 
 						OUTPUT_NAME_RELWITHDEBINFO "${RELEASE_MANGLED_NAME}")
 
-# Set the version and soversion for linux.
+# Set the version and soversion for Linux.
 if(SLOGLIB_VERSION AND SLOGLIB_SOVERSION)
 	set_target_properties(SLogLib PROPERTIES 
                             VERSION   "${SLOGLIB_VERSION}" 

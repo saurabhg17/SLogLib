@@ -8,13 +8,14 @@
 #define _SLOGLIB_DETAILEDFORMATTER_H_
 
 #include "SLogLib/Formatters/AbstractFormatter.h"
+#include "SLogLib/SysUtils.h"
 #include <sstream>
 #include <iomanip>
 
 namespace SLogLib {
 ;
 
-// The DetailedFormatter class formats all messages. A message is formatted as: 
+// The DetailedFormatter class formats messages at all levels. A message is formatted as: 
 // Msg Level  : 
 // Time       : Year-Month-Day Hour:Minutes:Seconds:Millisecond
 // Process ID : 
@@ -34,18 +35,18 @@ class DetailedFormatter : public AbstractFormatter
 {
 public:
 
-	explicit DetailedFormatter(NewLineFlag newLineFlag = DoNotAppendNewLine)
-		: AbstractFormatter(newLineFlag)
+	explicit DetailedFormatter(NewLine newLine = NewLine::No)
+		: AbstractFormatter(newLine)
 	{}
 
 
 	inline std::string FormatMessage(const Message& msg) const override
 	{
-		size_t   _size     = msg.mCallStack->size();
-		CallInfo _callInfo = (*msg.mCallStack)[_size-1];
+		size_t         _size     = msg.mCallStack->size();
+		const CallInfo _callInfo = (*msg.mCallStack)[_size-1];
 		
 		std::ostringstream _stream;
-		_stream << "Msg Level  : " << msg.mLevel                  << std::endl;
+		_stream << "Msg Level  : " << toInteger(msg.mLevel)       << std::endl;
 		_stream << "Time       : " << msg.mDateTime.mYear         << "-"
 			                       << msg.mDateTime.mMonth        << "-"
 								   << msg.mDateTime.mDay          << " "
@@ -62,7 +63,7 @@ public:
 		
 		for(size_t i=0 ; i<msg.mCallStack->size() ; ++i)
 		{
-			CallInfo _callInfo1 = (*msg.mCallStack)[i];
+			const CallInfo _callInfo1 = (*msg.mCallStack)[i];
 			
 			if(i==0)
 			{

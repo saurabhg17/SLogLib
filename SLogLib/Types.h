@@ -11,19 +11,26 @@ namespace SLogLib {
 ;
 
 // Levels indicating severity of message.
-enum MessageLevel
+enum class MessageLevel
 {
-	eLevelInfo,
-	eLevelWarn,
-	eLevelError,
-	eLevelDebug,
-	eLevelDetail,
+	Info,
+	Warn,
+	Error,
+	Debug,
+	Detail
 };
 
-enum NewLineFlag
+// Flag for inserting new line after every message.
+enum class NewLine
 {
-	DoNotAppendNewLine = 0,
-	AppendNewLine      = 1
+	No  = 0,
+	Yes = 1
+};
+
+// Flag to indicate when a file should be opened for writing.
+enum class Open
+{
+	Immediately, FirstUse
 };
 
 };	// End namespace SLogLib.

@@ -1,33 +1,14 @@
-
-// This file is part of SLogLib; you can redistribute it and/or
+// 
+// This file is part of SLogLib; you can redistribute it and/or 
 // modify it under the terms of the MIT License.
+// Author: Saurabh Garg (saurabhgarg@mysoc.net)
 // 
-// Copyright (c) 2018 Saurabh Garg
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-// 
-// Author(s): Saurabh Garg
 
 #ifndef _SLOGLIB_HTMLFORMATTER_H_
 #define _SLOGLIB_HTMLFORMATTER_H_
 
 #include "SLogLib/Formatters/AbstractFormatter.h"
+#include "SLogLib/SysUtils.h"
 #include <sstream>
 #include <iomanip>
 
@@ -40,8 +21,8 @@ class HtmlFormatter : public AbstractFormatter
 {
 public:
 
-	explicit HtmlFormatter(NewLineFlag newLineFlag = DoNotAppendNewLine)
-		: AbstractFormatter(newLineFlag), mInfoColor("black"), mWarnColor("coral"), 
+	explicit HtmlFormatter(NewLine newLine = NewLine::No)
+		: AbstractFormatter(newLine), mInfoColor("black"), mWarnColor("coral"), 
 	      mErrorColor("red"), mDebugColor("fuchsia"), mDetailColor("purple"), mBottomMargin(0.4)
 	{}
 	
@@ -104,25 +85,26 @@ public:
 
 private:
 
-	std::string _getColor(unsigned int level) const
+	std::string _getColor(MessageLevel level) const
 	{
-		if(level == eLevelInfo)
+		int _level = toInteger(level);
+		if(_level == toInteger(MessageLevel::Info))
 		{
 			return mInfoColor;
 		}
-		else if(level == eLevelWarn)
+		else if(_level == toInteger(MessageLevel::Warn))
 		{
 			return mWarnColor;
 		}
-		else if(level == eLevelError)
+		else if(_level == toInteger(MessageLevel::Error))
 		{
 			return mErrorColor;
 		}
-		else if(level == eLevelDebug)
+		else if(_level == toInteger(MessageLevel::Debug))
 		{
 			return mDebugColor;
 		}
-		else if(level == eLevelDetail)
+		else if(_level == toInteger(MessageLevel::Detail))
 		{
 			return mDetailColor;
 		}

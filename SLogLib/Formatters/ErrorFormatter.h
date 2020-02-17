@@ -28,14 +28,14 @@ class ErrorFormatter : public AbstractFormatter
 {
 public:
 
-	explicit ErrorFormatter(NewLineFlag newLineFlag = DoNotAppendNewLine)
-		: AbstractFormatter(newLineFlag)
+	explicit ErrorFormatter(NewLine newLine = NewLine::No)
+		: AbstractFormatter(newLine)
 	{}
 
 
 	inline std::string FormatMessage(const Message& msg) const override
 	{
-		if(msg.mLevel != eLevelError)
+		if(msg.mLevel != MessageLevel::Error)
 		{
 			return "";
 		}
@@ -58,7 +58,7 @@ public:
 									   << msg.mDateTime.mSecond       << ":"
 									   << msg.mDateTime.mMilliseconds << std::endl;
 			
-			CallInfo _callInfo = (*msg.mCallStack)[msg.mCallStack->size()-1];
+			const CallInfo _callInfo = (*msg.mCallStack)[msg.mCallStack->size()-1];
 			_stream << "FileName   : " << _callInfo.mFileName   << std::endl;
 			_stream << "FuncName   : " << _callInfo.mFuncName   << std::endl;
 			_stream << "Line No.   : " << _callInfo.mLineNumber << std::endl;

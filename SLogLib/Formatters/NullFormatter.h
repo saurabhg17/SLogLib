@@ -21,13 +21,13 @@ class NullFormatter : public AbstractFormatter
 {
 public:
 	
-	explicit NullFormatter(NewLineFlag newLineFlag = DoNotAppendNewLine)
-		: AbstractFormatter(newLineFlag)
+	explicit NullFormatter(NewLine newLine = NewLine::No)
+		: AbstractFormatter(newLine)
 	{}
 
 	inline std::string FormatMessage(const Message& msg) const override
 	{
-		if(mNewLineFlag == AppendNewLine)
+		if(mNewLine == NewLine::Yes)
 		{
 			std::ostringstream _stream;
 			_stream << msg.mUserMessage << std::endl;

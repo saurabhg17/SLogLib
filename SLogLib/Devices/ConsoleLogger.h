@@ -13,7 +13,7 @@
 namespace SLogLib {
 ;
 
-// The ConsoleLogger class writes the logging messages to a console (STDOUT).
+// The ConsoleLogger class writes the logging messages to a console (stdout).
 class ConsoleLogger : public AbstractLoggingDevice
 {
 public:
@@ -22,12 +22,20 @@ public:
 		: AbstractLoggingDevice(formatter) {}
 	explicit ConsoleLogger(AbstractFormatter* formatter, const std::string& name) 
 		: AbstractLoggingDevice(formatter, name) {}
+	
+	~ConsoleLogger()
+	{
+		_FlushBufferedMessages();
+	}
 
 
 protected:
 	
 	inline void _WriteMessage(const std::string& message) override
 	{
+		// std::cout is thread-safe in the sense that its internal buffers are not
+		// corrupted when called from multiple threads. However, the order in which
+		// messages are printed is indeterminate.
 		std::cout << message;
 	}
 };

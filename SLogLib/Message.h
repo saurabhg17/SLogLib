@@ -26,7 +26,7 @@ struct Message
 	unsigned int mThreadId;
 	
 	Message()
-		: mLevel(eLevelInfo), mCallStack(nullptr), mProcessId(0), mThreadId(0)
+		: mLevel(MessageLevel::Info), mCallStack(nullptr), mProcessId(0), mThreadId(0)
 	{}
 };
 

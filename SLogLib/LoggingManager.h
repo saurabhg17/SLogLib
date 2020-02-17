@@ -11,16 +11,18 @@
 #include "SLogLib/AddToCallStack.h"
 #include "SLogLib/Devices/AbstractLoggingDevice.h"
 #include <list>
+#include <mutex>
+#include <atomic>
 
 namespace SLogLib {
 ;
 
-// The LoggingManager class the core engine. It manages various logging devices and writes messages 
-// to currently enabled logging devices.
+// The LoggingManager class is the core engine of the SLogLib. It manages various logging devices 
+// and writes messages to currently enabled logging devices.
 // 
 // LoggingManager is a single instance class. Use Instance() static function to get its instance.
-// It is possible to disable logging at runtime using DisableLoggin() or SetIsDisabled(). To
-// enable logging again use EnableLogging(). The current status can be retrieved by isDisabled().
+// It is possible to disable logging at runtime using DisableLogging() or SetDisabled(). To
+// enable logging again use EnableLogging(). The current status can be retrieved by IsDisabled().
 // Note that if logging is disabled then devices cannot be added or removed.
 // 
 // Easy to use macros and functions are provided in Logging.h and they should be used rather than 
@@ -29,15 +31,20 @@ class SLOGLIB_DLL_API LoggingManager
 {
 public:
 
-	~LoggingManager();
-
 	// Disable copying of LoggingManager instances in the client code.
 	// This makes sure there is only one instance of the logger.
 	LoggingManager(const LoggingManager&) = delete;
 	LoggingManager& operator=(const LoggingManager&) = delete;
 	LoggingManager(const LoggingManager&&) = delete;
-    LoggingManager & operator=(const LoggingManager&&) = delete;
+	LoggingManager& operator=(const LoggingManager&&) = delete;
 
+	~LoggingManager();
+
+	void EnableLogging();
+	void DisableLogging();
+	void SetDisabled(bool d);
+	inline bool IsDisabled() const { return mIsDisabled; }
+	
 	
 public:
 	
@@ -48,8 +55,8 @@ public:
 		return _singleton;
 	}
 	
-	// Add a new logging device. The device is owned by the logging manager and is automatically 
-	// deleted when LoggingManager is destructed.
+	// Add a new logging device. The device is owned by the logging manager 
+	// and is automatically deleted when LoggingManager is destructed.
 	void AddDevice(AbstractLoggingDevice* device);
 	
 	// Remove an existing logging device.
@@ -74,29 +81,23 @@ public:
 					  MessageLevel       level,
 					  const std::string& message);
 	
-public:
-	
-	inline void EnableLogging()     {mIsDisabled = false;}
-	inline void DisableLogging()    {mIsDisabled = true;}
-	inline void SetDisabled(bool d) {mIsDisabled = d;}
-	inline bool IsDisabled() const  {return mIsDisabled;}
-
 
 private:
 	
+	// Private to make the class single instance.
 	LoggingManager();
 
 
 private:
 	
-	// For storing the list of logging devices.
+	// Stores the list of all logging devices registered with SLogLib.
 	std::list<AbstractLoggingDevice*> mLoggingDevices;
 	
-	// For storing the current call stack.
-	CallStack mCallStack;
-	
+	// For synchronized access to mLoggingDevices.
+	std::mutex mLoggingDevicesMutex;
+
 	// If true then disable logging.
-	bool mIsDisabled;
+	std::atomic_bool mIsDisabled;
 };
 
 };	// End namespace SLogLib.

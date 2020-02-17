@@ -12,6 +12,7 @@
 #include "SLogLib/Formatters/AbstractFormatter.h"
 #include <string>
 #include <vector>
+#include <mutex>
 
 namespace SLogLib {
 ;
@@ -20,12 +21,12 @@ namespace SLogLib {
 // 
 // Logging device needs a formatter to format messages send to it. Formatter can be set only
 // during construction and cannot be changed later. The logging device owns the specified formatter
-// and deletes it automatically. This means, a unique instance of formatter must be created for 
+// and deletes it automatically. This means that a unique instance of formatter must be created for 
 // each device.
 // 
 // A logging device is identified by a name, which can be set during construction. If a name is 
-// not specified than a name of the form LoggingDeviceX (X is a natural number) is automatically 
-// assigned. Once a logging device is constructed its name cannot be changed.
+// not specified than a name of the form LoggingDevice_XXX (XXX is a natural number) is 
+// automatically assigned. Once a logging device is constructed its name cannot be changed.
 // 
 // A logging device can be enabled or disabled. A disabled device ignore all messages sent to it.
 // A device is enabled by default.
@@ -35,6 +36,12 @@ namespace SLogLib {
 // A device is not buffered by default. Buffering can be enabled or disabled by 
 // EnableBuffering() and DisableBuffering(). There is also a more general function SetBuffered(). 
 // The number of messages buffered (default: 1000) is specified by SetBufferedMessagesCount().
+// 
+// Ideally, any new logging device inherited from the AbstractLoggingDevice should be thread-safe,
+// however, if it is not possible to make it thread-safe then isThreadSafe() should return false.
+// 
+// All logging devices which support buffering should call _FlushBufferedMessages() from their 
+// destructor to write any pending messages before the device is deleted.
 class SLOGLIB_DLL_API AbstractLoggingDevice
 {
 public:
@@ -46,6 +53,7 @@ public:
 	// Format the message and write it to the device.
 	// For a buffered device, the message may not be immediately written to the device.
 	// This function is called by the LoggingManager to write a message to the device.
+	// Note that this is not a virtual function and should not be overridden by the derived classes.
 	void WriteMessage(const Message& message);
 	
 
@@ -66,6 +74,8 @@ public: // Getters and setters.
 	inline size_t BufferedMessagesCount() const {return mBufferedMessagesCount;}
 	void SetBufferedMessagesCount(size_t x);
 	
+	inline virtual bool IsThreadSafe() const {return true;}
+
 
 protected:
 	
@@ -74,17 +84,17 @@ protected:
 	
 	// Write an array of messages to the logging device.
 	// The default implementation simply calls _WriteMessage() for each message.
-	// If it is possible to write set of messages faster than using _WriteMessage() iteratively
-	// than override this function.
+	// If it is possible to write set of messages faster than calling _WriteMessage() 
+	// iteratively than override this function.
 	virtual void _WriteMessages(const std::vector<std::string>& messages);
 	
 	// Flush the currently buffered messages to the device.
 	// For a buffered device, concrete class must call this in the destructor to ensure 
-	// all messages are written to the device.
+	// all messages are written to the device before it is deleted.
 	void _FlushBufferedMessages();
 
 
-public: // Disable copying.
+public: // Disable copying and moving.
 
 	// Delete copy constructor and assignment operator.
 	AbstractLoggingDevice(const AbstractLoggingDevice&) = delete;
@@ -102,6 +112,7 @@ private:
 	bool                     mIsBuffered;            // Default: false
 	size_t                   mBufferedMessagesCount; // Default: 1000
 	std::vector<std::string> mBufferedMessages;
+	std::recursive_mutex     mBufferedMessagesMutex;
 };
 
 };	// End namespace SLogLib.

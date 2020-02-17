@@ -5,7 +5,6 @@
 // 
 
 #include "SLogLib/Devices/MemoryLogger.h"
-#include "SLogLib/SysUtils.h"
 
 namespace SLogLib {
 ;
@@ -14,12 +13,10 @@ namespace SLogLib {
 MemoryLogger::MemoryLogger(AbstractFormatter* formatter)
 	: AbstractLoggingDevice(formatter)
 {
-	DisableBuffering();
 }
 MemoryLogger::MemoryLogger(AbstractFormatter* formatter, const std::string& name) 
 	: AbstractLoggingDevice(formatter, name)
 {
-	DisableBuffering();
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -27,14 +24,17 @@ MemoryLogger::MemoryLogger(AbstractFormatter* formatter, const std::string& name
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void MemoryLogger::_WriteMessage(const std::string& message)
 {
+	std::lock_guard<std::mutex> _lock(mMessagesMutex);
 	mMessages.emplace_back(message);
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-std::string MemoryLogger::allMessages() const
+std::string MemoryLogger::Messages() const
 {
+	std::lock_guard<std::mutex> _lock(mMessagesMutex);
+
 	std::stringstream _stream;
 	for(const std::string& _message : mMessages)
 	{

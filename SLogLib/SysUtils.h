@@ -45,14 +45,14 @@ SLOGLIB_DLL_API unsigned int getCurrentThreadID();
 SLOGLIB_DLL_API DateTime getLocalDateTime();
 
 
-// Convert a type to string; the type must support std::ostringstream operator.
-template<class T>
-inline std::string toString(const T& x)
+// Convert the enum class member to its integer value.
+template <typename Enumeration>
+constexpr auto toInteger(Enumeration const value) -> typename std::underlying_type<Enumeration>::type
 {
-	std::ostringstream _stream;
-	_stream << x;
-	return _stream.str();
+	static_assert(std::is_enum<Enumeration>::value, "parameter is not of type enum or enum class");
+	return static_cast<typename std::underlying_type<Enumeration>::type>(value);
 }
+
 
 };	// End namespace SLogLib.
 

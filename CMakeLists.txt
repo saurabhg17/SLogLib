@@ -18,17 +18,17 @@ cmake_minimum_required(VERSION 2.8.11)
 #    If the binary interface is changed in an incompatible way to the previous release, then 
 #      increase the SLOGLIB_VERSION_MAJOR, and set the two other numbers to 0.
 set(SLOGLIB_VERSION_MAJOR 1)
-set(SLOGLIB_VERSION_MINOR 0)
+set(SLOGLIB_VERSION_MINOR 1)
 set(SLOGLIB_VERSION_BUGFIX 0)
 
-# SO verions are used in linux.
+# SO versions are used in Linux.
 set(SLOGLIB_VERSION   ${SLOGLIB_VERSION_MAJOR}.${SLOGLIB_VERSION_MINOR})
 set(SLOGLIB_SOVERSION ${SLOGLIB_VERSION_MAJOR})
 
 # Set the directories where the output files will be generated. To make it easy all files are
 # generated in the bin directory under the root of the build directory.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin) 
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_PDB_OUTPUT_DIRECTORY     ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

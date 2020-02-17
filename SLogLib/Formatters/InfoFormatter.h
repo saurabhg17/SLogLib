@@ -24,14 +24,14 @@ class InfoFormatter : public AbstractFormatter
 {
 public:
 
-	explicit InfoFormatter(NewLineFlag newLineFlag = DoNotAppendNewLine)
-		: AbstractFormatter(newLineFlag)
+	explicit InfoFormatter(NewLine newLine = NewLine::No)
+		: AbstractFormatter(newLine)
 	{}
 
 
 	inline std::string FormatMessage(const Message& msg) const override
 	{
-		if(msg.mLevel != eLevelInfo)
+		if(msg.mLevel != MessageLevel::Info)
 		{
 			return "";
 		}
@@ -48,12 +48,15 @@ public:
 		else
 		{
 			_stream.fill('0');
-			_stream << std::setw(2) << msg.mDateTime.mHour         << ":"
+			_stream << std::setw(4) << msg.mDateTime.mYear         << "."
+			        << std::setw(2) << msg.mDateTime.mMonth        << "."
+			        << std::setw(2) << msg.mDateTime.mDay          << "-"
+			        << std::setw(2) << msg.mDateTime.mHour         << ":"
 					<< std::setw(2) << msg.mDateTime.mMinute       << ":"
 					<< std::setw(2) << msg.mDateTime.mSecond       << ":"
-					<< std::setw(3) << msg.mDateTime.mMilliseconds << "    ";
+					<< std::setw(3) << msg.mDateTime.mMilliseconds << ": ";
 			
-			size_t      _padSize = 16;
+			size_t      _padSize = 25;
 			std::string _temp    = msg.mUserMessage;
 			size_t      _loc     = _temp.find("\n");
 			while(_loc != std::string::npos)

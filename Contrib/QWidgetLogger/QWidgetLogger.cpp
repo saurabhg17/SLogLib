@@ -5,6 +5,7 @@
 // 
 
 #include <QtCore/QThread>
+#include <QtGui/QGuiApplication>
 #include <QtWidgets/QScrollBar>
 #include "SLogLib/SLogLib.h"
 #include "QWidgetLogger.h"

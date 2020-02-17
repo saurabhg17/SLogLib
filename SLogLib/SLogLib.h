@@ -11,6 +11,7 @@
 #include "SLogLib/LoggingManager.h"
 #include "SLogLib/AddToCallStack.h"
 #include "SLogLib/Devices/AbstractLoggingDevice.h"
+#include "SLogLib/Types.h"
 #include <sstream>
 #include <string>
 
@@ -18,7 +19,7 @@
 	// The macro to write the message to all logging devices.
 	// level is the message level.
 	// msg is the message to write to logging devices.
-	#define SLOGLIB_LOG_MESSAGE(level, msg)         \
+	#define SLOGLIB_LOG_MESSAGE(level, msg)              \
 	{                                                    \
 		unsigned int _lineNo = __LINE__;                 \
 		std::ostringstream __stream__unique__;           \
@@ -31,11 +32,11 @@
 	}
 	
 	// Convenience macros to write the message at various levels.
-	#define SLOGLIB_LOG_MSG_INFO(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::eLevelInfo  , msg);
-	#define SLOGLIB_LOG_MSG_WARN(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::eLevelWarn  , msg);
-	#define SLOGLIB_LOG_MSG_ERROR(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::eLevelError , msg);
-	#define SLOGLIB_LOG_MSG_DEBUG(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::eLevelDebug , msg);
-	#define SLOGLIB_LOG_MSG_DETAIL(msg) SLOGLIB_LOG_MESSAGE(SLogLib::eLevelDetail, msg);
+	#define SLOGLIB_LOG_MSG_INFO(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::MessageLevel::Info  , msg);
+	#define SLOGLIB_LOG_MSG_WARN(msg)   SLOGLIB_LOG_MESSAGE(SLogLib::MessageLevel::Warn  , msg);
+	#define SLOGLIB_LOG_MSG_ERROR(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::MessageLevel::Error , msg);
+	#define SLOGLIB_LOG_MSG_DEBUG(msg)  SLOGLIB_LOG_MESSAGE(SLogLib::MessageLevel::Debug , msg);
+	#define SLOGLIB_LOG_MSG_DETAIL(msg) SLOGLIB_LOG_MESSAGE(SLogLib::MessageLevel::Detail, msg);
 	
 	// The macro to add the current function to the call stack.
 	#define SLOGLIB_ADD_TO_CALLSTACK SLogLib::AddToCallStack \

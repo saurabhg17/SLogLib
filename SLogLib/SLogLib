@@ -1,9 +1,19 @@
+// 
+// This file is part of SLogLib; you can redistribute it and/or 
+// modify it under the terms of the MIT License.
+// Author: Saurabh Garg (saurabhgarg@mysoc.net)
+// 
+
 #include "SLogLib/SLogLib.h"
+
 #include "SLogLib/Formatters/AbstractFormatter.h"
-#include "SLogLib/Formatters/NullFormatter.h"
-#include "SLogLib/Formatters/InfoFormatter.h"
-#include "SLogLib/Formatters/ErrorFormatter.h"
 #include "SLogLib/Formatters/DetailedFormatter.h"
+#include "SLogLib/Formatters/ErrorFormatter.h"
+#include "SLogLib/Formatters/HtmlFormatter.h"
+#include "SLogLib/Formatters/InfoFormatter.h"
+#include "SLogLib/Formatters/NullFormatter.h"
+
 #include "SLogLib/Devices/AbstractLoggingDevice.h"
 #include "SLogLib/Devices/ConsoleLogger.h"
 #include "SLogLib/Devices/FileLogger.h"
+#include "SLogLib/Devices/MemoryLogger.h"
