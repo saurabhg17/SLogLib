@@ -17,6 +17,8 @@
 namespace SLogLib {
 ;
 
+struct LoggingManagerPriv;
+
 // The LoggingManager class is the core engine of the SLogLib. It manages various logging devices 
 // and writes messages to currently enabled logging devices.
 // 
@@ -43,7 +45,7 @@ public:
 	void EnableLogging();
 	void DisableLogging();
 	void SetDisabled(bool d);
-	inline bool IsDisabled() const { return mIsDisabled; }
+	bool IsDisabled() const;
 	
 	
 public:
@@ -90,14 +92,7 @@ private:
 
 private:
 	
-	// Stores the list of all logging devices registered with SLogLib.
-	std::list<AbstractLoggingDevice*> mLoggingDevices;
-	
-	// For synchronized access to mLoggingDevices.
-	std::mutex mLoggingDevicesMutex;
-
-	// If true then disable logging.
-	std::atomic_bool mIsDisabled;
+	LoggingManagerPriv* mPriv;
 };
 
 };	// End namespace SLogLib.

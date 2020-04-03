@@ -10,13 +10,36 @@ namespace SLogLib {
 ;
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+struct MemoryLoggerPriv
+{
+	std::list<std::string> mMessages;
+	mutable std::mutex     mMessagesMutex;
+};
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 MemoryLogger::MemoryLogger(AbstractFormatter* formatter)
 	: AbstractLoggingDevice(formatter)
 {
+	mPriv = new MemoryLoggerPriv;
 }
 MemoryLogger::MemoryLogger(AbstractFormatter* formatter, const std::string& name) 
 	: AbstractLoggingDevice(formatter, name)
 {
+	mPriv = new MemoryLoggerPriv;
+}
+MemoryLogger::~MemoryLogger()
+{
+	delete mPriv;
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+const std::list<std::string>& MemoryLogger::MessageList() const
+{
+	return mPriv->mMessages;
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -24,8 +47,8 @@ MemoryLogger::MemoryLogger(AbstractFormatter* formatter, const std::string& name
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void MemoryLogger::_WriteMessage(const std::string& message)
 {
-	std::lock_guard<std::mutex> _lock(mMessagesMutex);
-	mMessages.emplace_back(message);
+	std::lock_guard<std::mutex> _lock(mPriv->mMessagesMutex);
+	mPriv->mMessages.emplace_back(message);
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -33,10 +56,10 @@ void MemoryLogger::_WriteMessage(const std::string& message)
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 std::string MemoryLogger::Messages() const
 {
-	std::lock_guard<std::mutex> _lock(mMessagesMutex);
+	std::lock_guard<std::mutex> _lock(mPriv->mMessagesMutex);
 
 	std::stringstream _stream;
-	for(const std::string& _message : mMessages)
+	for(const std::string& _message : mPriv->mMessages)
 	{
 		_stream << _message;
 	}

@@ -12,10 +12,12 @@
 #include "SLogLib/Formatters/AbstractFormatter.h"
 #include <string>
 #include <vector>
-#include <mutex>
 
 namespace SLogLib {
 ;
+
+// PIMPL: Hide implementation details.
+struct AbstractLoggingDevicePriv;
 
 // The AbstractLoggingDevice class is the abstract base class of all logging devices. 
 // 
@@ -59,19 +61,19 @@ public:
 
 public: // Getters and setters.
 	
-	inline std::string Name() const {return mName;}
+	std::string Name() const;
 	
 	inline void Enable()          {SetEnabled(true);}
 	inline void Disable()         {SetEnabled(false);}
-	inline bool IsEnabled() const {return mIsEnabled;}
+	bool IsEnabled() const;
 	void SetEnabled(bool x);
 	
 	inline void EnableBuffering()  {SetBuffered(true);}
 	inline void DisableBuffering() {SetBuffered(false);}
-	inline bool IsBuffered() const {return mIsBuffered;}
+	bool IsBuffered() const;
 	void SetBuffered(bool x);
 	
-	inline size_t BufferedMessagesCount() const {return mBufferedMessagesCount;}
+	size_t BufferedMessagesCount() const;
 	void SetBufferedMessagesCount(size_t x);
 	
 	inline virtual bool IsThreadSafe() const {return true;}
@@ -106,13 +108,7 @@ public: // Disable copying and moving.
 
 private:
 	
-	AbstractFormatter*       mFormatter;
-	std::string              mName;
-	bool                     mIsEnabled;             // Default: true
-	bool                     mIsBuffered;            // Default: false
-	size_t                   mBufferedMessagesCount; // Default: 1000
-	std::vector<std::string> mBufferedMessages;
-	std::recursive_mutex     mBufferedMessagesMutex;
+	AbstractLoggingDevicePriv* mPriv;
 };
 
 };	// End namespace SLogLib.

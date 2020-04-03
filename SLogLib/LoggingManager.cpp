@@ -17,17 +17,43 @@ thread_local CallStack gCallStack;
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+struct LoggingManagerPriv
+{
+	LoggingManagerPriv()
+		: mIsDisabled(false)
+	{
+	}
+
+	~LoggingManagerPriv()
+	{
+		// Destructor will be called by the main thread, just before program dies.
+		std::lock_guard<std::mutex> _lock(mLoggingDevicesMutex);
+		for(AbstractLoggingDevice* _device : mLoggingDevices)
+		{
+			delete _device;
+		}
+	}
+
+	// Stores the list of all logging devices registered with SLogLib.
+	std::list<AbstractLoggingDevice*> mLoggingDevices;
+
+	// For synchronized access to mLoggingDevices.
+	std::mutex mLoggingDevicesMutex;
+
+	// If true then disable logging.
+	std::atomic_bool mIsDisabled;
+};
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 LoggingManager::LoggingManager() 
-	: mIsDisabled(false)
-{}
+{
+	mPriv = new LoggingManagerPriv;
+}
 LoggingManager::~LoggingManager()
 {
-	// Destructor will be called by the main thread, just before program dies.
-	std::lock_guard<std::mutex> _lock(mLoggingDevicesMutex);
-	for(AbstractLoggingDevice* _device :  mLoggingDevices)
-	{
-		delete _device;
-	}
+	delete mPriv;
 }
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -36,15 +62,19 @@ LoggingManager::~LoggingManager()
 // mIsDisabled is atomic.
 void LoggingManager::EnableLogging()
 {
-	mIsDisabled = false;
+	mPriv->mIsDisabled = false;
 }
 void LoggingManager::DisableLogging()
 {
-	mIsDisabled = true;
+	mPriv->mIsDisabled = true;
 }
 void LoggingManager::SetDisabled(bool d)
 {
-	mIsDisabled = d;
+	mPriv->mIsDisabled = d;
+}
+bool LoggingManager::IsDisabled() const
+{
+	return mPriv->mIsDisabled;
 }
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -52,12 +82,12 @@ void LoggingManager::SetDisabled(bool d)
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::AddDevice(AbstractLoggingDevice* device)
 {
-	if(!mIsDisabled && device != nullptr)
+	if(!mPriv->mIsDisabled && device != nullptr)
 	{
-		std::lock_guard<std::mutex> _lock(mLoggingDevicesMutex);
+		std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
 		
 		// Device name must be unique.
-		for(AbstractLoggingDevice* _device : mLoggingDevices)
+		for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
 		{
 			if(device->Name() == _device->Name())
 			{
@@ -67,7 +97,7 @@ void LoggingManager::AddDevice(AbstractLoggingDevice* device)
 			}
 		}
 		
-		mLoggingDevices.push_back(device);
+		mPriv->mLoggingDevices.push_back(device);
 	}
 }
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -87,20 +117,20 @@ void LoggingManager::RemoveDevice(AbstractLoggingDevice* device)
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::RemoveDevice(const std::string& deviceName)
 {
-	if(!mIsDisabled)
+	if(!mPriv->mIsDisabled)
 	{
 		// Lock must be here because another thread can add 
 		// a new device while we are iterating over logging devices.
-		std::lock_guard<std::mutex> _lock(mLoggingDevicesMutex);
+		std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
 
 		// We don't have to worry about iterator becoming invalid 
 		// since we exit from loop immediately after erasing the device
-		for(auto _iter = mLoggingDevices.begin() ; _iter!=mLoggingDevices.end() ; ++_iter)
+		for(auto _iter = mPriv->mLoggingDevices.begin() ; _iter!=mPriv->mLoggingDevices.end() ; ++_iter)
 		{
 			AbstractLoggingDevice* _device = *_iter;
 			if(deviceName == _device->Name())
 			{
-				mLoggingDevices.erase(_iter);
+				mPriv->mLoggingDevices.erase(_iter);
 				delete _device;
 				return;
 			}
@@ -115,9 +145,9 @@ AbstractLoggingDevice* LoggingManager::QueryDevice(const std::string& deviceName
 {
 	// Lock must be here because another thread can add 
 	// a new device while the for loop is running.
-	std::lock_guard<std::mutex> _lock(mLoggingDevicesMutex);
+	std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
 
-	for(AbstractLoggingDevice* _device : mLoggingDevices)
+	for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
 	{
 		if(deviceName == _device->Name())
 		{
@@ -134,7 +164,7 @@ void LoggingManager::PushFunction(const std::string& fileName,
 	                              const std::string& funcName, 
 								  unsigned int       lineNumber)
 {
-	if(!mIsDisabled)
+	if(!mPriv->mIsDisabled)
 	{
 		// Since call stack is per thread no synchronization is required.
 		gCallStack.emplace_back(fileName, funcName, lineNumber);
@@ -146,7 +176,7 @@ void LoggingManager::PushFunction(const std::string& fileName,
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::PopFunction()
 {
-	if(!mIsDisabled)
+	if(!mPriv->mIsDisabled)
 	{
 		// Since call stack is per thread no synchronization is required.
 		gCallStack.pop_back();
@@ -162,7 +192,7 @@ void LoggingManager::WriteMessage(const std::string& fileName,
 								  MessageLevel       level,
 								  const std::string& message)
 {
-	if(!mIsDisabled)
+	if(!mPriv->mIsDisabled)
 	{
 		PushFunction(fileName, funcName, lineNumber);
 		
@@ -177,11 +207,11 @@ void LoggingManager::WriteMessage(const std::string& fileName,
 		
 		// Lock must be here because another thread can add or 
 		// remove a device while the for loop is running.
-		std::lock_guard<std::mutex> _lock(mLoggingDevicesMutex);
+		std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
 
 		// Iterate over all LoggingDevices and write the message
 		// to the enabled devices.
-		for(AbstractLoggingDevice* _device : mLoggingDevices)
+		for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
 		{
 			if(_device->IsEnabled())
 			{

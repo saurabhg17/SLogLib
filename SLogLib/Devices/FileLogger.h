@@ -16,6 +16,8 @@
 namespace SLogLib {
 ;
 
+struct FileLoggerPriv;
+
 // The FileLogger class writes logging messages to a file.
 // 
 // The FileLogger writes to a file whose name must be specified while construction and it cannot
@@ -41,12 +43,11 @@ public:
 
 public:
 	
-	inline std::string FileName() const {return mFileName;}
-	
-	inline void EnableAutoFlush()          {mHasAutoFlush = true;}
-	inline void DisableAutoFlush()         {mHasAutoFlush = false;}
-	inline void SetAutoFlush(bool b)       {mHasAutoFlush = b;}
-	inline bool IsAutoFlushEnabled() const {return mHasAutoFlush;}
+	std::string FileName() const;
+	void EnableAutoFlush();
+	void DisableAutoFlush();
+	void SetAutoFlush(bool b);
+	bool IsAutoFlushEnabled() const;
 	
 
 private:
@@ -68,11 +69,7 @@ public: // Disable copying.
 
 private:
 	
-	std::ofstream mFileHandle;
-	std::string   mFileName;
-	bool          mHasAutoFlush;  // Default: false
-	Open          mFileOpenFlag;  // Default: FirstUse.
-	std::mutex    mFileWriteMutex;
+	FileLoggerPriv* mPriv;
 };
 
 };	// End namespace SLogLib.

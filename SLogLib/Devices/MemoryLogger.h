@@ -15,6 +15,8 @@
 namespace SLogLib {
 ;
 
+struct MemoryLoggerPriv;
+
 // The MemoryLogger class writes logging messages to a memory buffer. This is useful when log 
 // need to be stored in custom location such as database or user-defined file format at the end.
 class SLOGLIB_DLL_API MemoryLogger : public AbstractLoggingDevice
@@ -23,12 +25,13 @@ public:
 	
 	explicit MemoryLogger(AbstractFormatter* formatter);
 	MemoryLogger(AbstractFormatter* formatter, const std::string& name);
+	~MemoryLogger();
 	
 	// Return all messages logged so far concatenated into a string.
 	std::string Messages() const;
 
 	// Return the list of all messages logged so far.
-	inline const std::list<std::string>& MessageList() const {return mMessages;}
+	const std::list<std::string>& MessageList() const;
 
 
 private:
@@ -61,8 +64,7 @@ public: // Disable copying.
 
 private:
 
-	std::list<std::string> mMessages;
-	mutable std::mutex     mMessagesMutex;
+	MemoryLoggerPriv* mPriv;
 };
 
 };	// End namespace SLogLib.
