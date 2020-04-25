@@ -23,20 +23,20 @@ struct AbstractLoggingDevicePriv
 		assert(mFormatter);
 		mBufferedMessages.reserve(mBufferedMessagesCount);
 
-		static std::atomic_int _deviceID = 1;
+		static std::atomic_int _deviceID(1);
 		std::ostringstream _stream;
 		_stream << "LoggingDevice_" << std::setfill('0') << std::setw(3) << _deviceID++;
 		mName = _stream.str();
 	}
-
+	
 	AbstractLoggingDevicePriv(AbstractFormatter* formatter, const std::string& name)
 		: mFormatter(formatter), mName(name), mIsEnabled(true), mIsBuffered(false), mBufferedMessagesCount(1000)
 	{
 		assert(mFormatter);
 		mBufferedMessages.reserve(mBufferedMessagesCount);
 	}
-
-	AbstractLoggingDevicePriv::~AbstractLoggingDevicePriv()
+	
+	~AbstractLoggingDevicePriv()
 	{
 		delete mFormatter;
 	}

@@ -14,6 +14,7 @@ SET(HDRS AddToCallStack.h
          Formatters/AbstractFormatter.h
          Formatters/DetailedFormatter.h
          Formatters/ErrorFormatter.h
+		 Formatters/FullFormatter.h
          Formatters/HtmlFormatter.h
          Formatters/InfoFormatter.h
          Formatters/NullFormatter.h)
