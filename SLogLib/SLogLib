@@ -9,6 +9,7 @@
 #include "SLogLib/Formatters/AbstractFormatter.h"
 #include "SLogLib/Formatters/DetailedFormatter.h"
 #include "SLogLib/Formatters/ErrorFormatter.h"
+#include "SLogLib/Formatters/FullFormatter.h"
 #include "SLogLib/Formatters/HtmlFormatter.h"
 #include "SLogLib/Formatters/InfoFormatter.h"
 #include "SLogLib/Formatters/NullFormatter.h"
