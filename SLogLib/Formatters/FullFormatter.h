@@ -30,8 +30,6 @@ public:
 	inline std::string FormatMessage(const Message& msg) const override
 	{
 		std::ostringstream _stream;
-		_stream.fill('0');
-		_stream.width(2);
 		
 		if(msg.mUserMessage == "\n")
 		{
@@ -39,15 +37,24 @@ public:
 		}
 		else
 		{
-			_stream << msg.mDateTime.mYear         << "-"
-			        << msg.mDateTime.mMonth        << "-"
-					<< msg.mDateTime.mDay          << "T"
-					<< msg.mDateTime.mHour         << ":"
-					<< msg.mDateTime.mMinute       << ":"
-					<< msg.mDateTime.mSecond       << ":"
+			_stream << 
+					<< msg.mDateTime.mYear   << "-"
+					<< std::setw(2) << std::setfill('0')
+					<< msg.mDateTime.mMonth  << "-"
+					<< msg.mDateTime.mDay    << " "
+					
+					<< msg.mDateTime.mHour   << ":"
+					<< msg.mDateTime.mMinute << ":"
+					<< msg.mDateTime.mSecond << ":"
+					
+					<< std::setw(3) << std::setfill('0')
 					<< msg.mDateTime.mMilliseconds << "\t"
-					<< msg.mThreadId               << "\t"
-					<< msg.mUserMessage            << std::endl;
+					
+					<< std::setfill(' ') << std::setw(6)
+					<< msg.mThreadId << "\t"
+					
+					
+					<< msg.mUserMessage      << std::endl;
 		}
 		
 		return _stream.str();

@@ -21,7 +21,7 @@
 	// msg is the message to write to logging devices.
 	#define SLOGLIB_LOG_MESSAGE(level, msg)              \
 	{                                                    \
-		unsigned int _lineNo = __LINE__;                 \
+		constexpr unsigned int _lineNo = __LINE__;                 \
 		std::ostringstream __stream__unique__;           \
 		__stream__unique__ << msg;                       \
 		SLogLib::writeMessage(__FILE__,                  \

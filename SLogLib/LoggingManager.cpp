@@ -149,7 +149,7 @@ AbstractLoggingDevice* LoggingManager::QueryDevice(const std::string& deviceName
 
 	for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
 	{
-		if(deviceName == _device->Name())
+		if(_device && deviceName == _device->Name())
 		{
 			return _device;
 		}
@@ -213,7 +213,7 @@ void LoggingManager::WriteMessage(const std::string& fileName,
 		// to the enabled devices.
 		for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
 		{
-			if(_device->IsEnabled())
+			if(_device && _device->IsEnabled())
 			{
 				_device->WriteMessage(_message);
 			}

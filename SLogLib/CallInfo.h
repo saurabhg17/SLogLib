@@ -18,14 +18,14 @@ struct CallInfo
 {
 public:
 	
-	CallInfo()
+	CallInfo() noexcept
 		: mLineNumber(0)
 	{}
 	CallInfo(const std::string& fileName, const std::string& funcName, unsigned int lineNumber)
 		: mFileName(fileName), mFuncName(funcName), mLineNumber(lineNumber)
 	{}
 	
-	bool operator != (const CallInfo& B) const
+	bool operator != (const CallInfo& B) const noexcept
 	{
 		return !(B.mFileName==mFileName && B.mFuncName==mFuncName && B.mLineNumber==mLineNumber);
 	}

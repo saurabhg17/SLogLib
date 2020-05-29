@@ -7,6 +7,9 @@
 #ifndef _SLOGLIB_TYPES_H_
 #define _SLOGLIB_TYPES_H_
 
+#include "SLogLib/Config.h"
+#include <string>
+
 namespace SLogLib {
 ;
 
@@ -19,6 +22,9 @@ enum class MessageLevel
 	Debug,
 	Detail
 };
+
+SLOGLIB_DLL_API std::string toString(const MessageLevel& messageLevel);
+
 
 // Flag for inserting new line after every message.
 enum class NewLine

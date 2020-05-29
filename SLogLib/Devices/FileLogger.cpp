@@ -7,6 +7,7 @@
 #include "SLogLib/Devices/FileLogger.h"
 #include "SLogLib/SysUtils.h"
 #include <exception>
+#include <mutex>
 
 namespace SLogLib {
 ;
@@ -29,11 +30,11 @@ struct FileLoggerPriv
 		}
 	}
 	
-	std::ofstream mFileHandle;
-	std::string   mFileName;
-	bool          mHasAutoFlush;  // Default: false
-	Open          mFileOpenFlag;  // Default: FirstUse.
-	std::mutex    mFileWriteMutex;
+	std::ofstream        mFileHandle;
+	std::string          mFileName;
+	bool                 mHasAutoFlush;  // Default: false
+	Open                 mFileOpenFlag;  // Default: FirstUse.
+	std::recursive_mutex mFileWriteMutex;
 };
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -87,7 +88,7 @@ bool FileLogger::IsAutoFlushEnabled() const
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void FileLogger::FlushDevice()
 {
-	std::lock_guard<std::mutex> _lock(mPriv->mFileWriteMutex);
+	std::lock_guard<std::recursive_mutex> _lock(mPriv->mFileWriteMutex);
 	mPriv->mFileHandle.flush();
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -96,7 +97,7 @@ void FileLogger::FlushDevice()
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void FileLogger::_WriteMessage(const std::string& message)
 {
-	std::lock_guard<std::mutex> _lock(mPriv->mFileWriteMutex);
+	std::lock_guard<std::recursive_mutex> _lock(mPriv->mFileWriteMutex);
 
 	if(!mPriv->mFileHandle)
 	{
@@ -122,7 +123,7 @@ void FileLogger::_WriteMessage(const std::string& message)
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void FileLogger::_WriteMessages(const std::vector<std::string>& messages)
 {
-	std::lock_guard<std::mutex> _lock(mPriv->mFileWriteMutex);
+	std::lock_guard<std::recursive_mutex> _lock(mPriv->mFileWriteMutex);
 
 	if(!mPriv->mFileHandle)
 	{
