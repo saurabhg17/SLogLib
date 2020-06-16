@@ -46,7 +46,7 @@ public:
 
 public:
 	
-	inline std::string FormatMessage(const Message& msg) const override
+	inline std::string formatMessage(const Message& msg) const override
 	{
 		std::ostringstream _stream;
 		

@@ -27,7 +27,7 @@ public:
 	virtual ~AbstractFormatter() = default;
 	
 	// Format a message to std::string.
-	virtual std::string FormatMessage(const Message& msg) const = 0;
+	virtual std::string formatMessage(const Message& msg) const = 0;
 
 	
 protected:

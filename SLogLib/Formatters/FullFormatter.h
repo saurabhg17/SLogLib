@@ -27,7 +27,7 @@ public:
 	{}
 	
 	
-	inline std::string FormatMessage(const Message& msg) const override
+	inline std::string formatMessage(const Message& msg) const override
 	{
 		std::ostringstream _stream;
 		
@@ -37,8 +37,7 @@ public:
 		}
 		else
 		{
-			_stream << 
-					<< msg.mDateTime.mYear   << "-"
+			_stream << msg.mDateTime.mYear   << "-"
 					<< std::setw(2) << std::setfill('0')
 					<< msg.mDateTime.mMonth  << "-"
 					<< msg.mDateTime.mDay    << " "
@@ -53,8 +52,7 @@ public:
 					<< std::setfill(' ') << std::setw(6)
 					<< msg.mThreadId << "\t"
 					
-					
-					<< msg.mUserMessage      << std::endl;
+					<< msg.mUserMessage << std::endl;
 		}
 		
 		return _stream.str();
