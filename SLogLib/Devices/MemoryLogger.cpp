@@ -37,7 +37,7 @@ MemoryLogger::~MemoryLogger()
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-const std::list<std::string>& MemoryLogger::MessageList() const
+const std::list<std::string>& MemoryLogger::MessageList() const noexcept
 {
 	return mPriv->mMessages;
 }

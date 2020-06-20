@@ -73,15 +73,15 @@ std::string AbstractLoggingDevice::Name() const
 {
 	return mPriv->mName;
 }
-bool AbstractLoggingDevice::IsEnabled() const
+bool AbstractLoggingDevice::IsEnabled() const noexcept
 {
 	return mPriv->mIsEnabled;
 }
-bool AbstractLoggingDevice::IsBuffered() const
+bool AbstractLoggingDevice::IsBuffered() const noexcept
 {
 	return mPriv->mIsBuffered;
 }
-size_t AbstractLoggingDevice::BufferedMessagesCount() const
+size_t AbstractLoggingDevice::BufferedMessagesCount() const noexcept
 {
 	return mPriv->mBufferedMessagesCount;
 }
@@ -93,7 +93,7 @@ void AbstractLoggingDevice::WriteMessage(const Message& message)
 {
 	if(mPriv->mIsEnabled)
 	{
-		std::string _formattedMessage = mPriv->mFormatter->FormatMessage(message);
+		std::string _formattedMessage = mPriv->mFormatter->formatMessage(message);
 		if(mPriv->mIsBuffered)
 		{
 			// Use a recursive lock as we need to lock again in _FlushBufferedMessages().

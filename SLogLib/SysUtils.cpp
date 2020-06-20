@@ -38,7 +38,7 @@ void sleep(unsigned int msec)
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-unsigned int getCurrentProcessID()
+unsigned int getCurrentProcessID() noexcept
 {
 #if defined(SLOGLIB_OS_WINDOWS)
 	return ::GetCurrentProcessId();
@@ -50,7 +50,7 @@ unsigned int getCurrentProcessID()
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-unsigned int getCurrentThreadID()
+unsigned int getCurrentThreadID() noexcept
 {
 #if defined(SLOGLIB_OS_WINDOWS)
 	return ::GetCurrentThreadId();
@@ -62,7 +62,7 @@ unsigned int getCurrentThreadID()
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-DateTime getLocalDateTime()
+DateTime getLocalDateTime() noexcept
 {
 	DateTime _dateTime;
 	#if defined(SLOGLIB_OS_WINDOWS)

@@ -20,7 +20,7 @@ class AbstractFormatter
 {
 public:
 
-	explicit AbstractFormatter(NewLine newLine = NewLine::No)
+	explicit AbstractFormatter(NewLine newLine = NewLine::No) noexcept
 		: mNewLine(newLine)
 	{}
 	

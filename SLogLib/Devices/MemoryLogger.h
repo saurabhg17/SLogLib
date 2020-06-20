@@ -31,7 +31,7 @@ public:
 	std::string Messages() const;
 
 	// Return the list of all messages logged so far.
-	const std::list<std::string>& MessageList() const;
+	const std::list<std::string>& MessageList() const noexcept;
 
 
 private:

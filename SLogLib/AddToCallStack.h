@@ -17,8 +17,8 @@ namespace SLogLib {
 // the call stack. The constructor adds the function call and destructor removes it.
 struct SLOGLIB_DLL_API AddToCallStack
 {
-	AddToCallStack(const std::string& fileName, const std::string& funcName, unsigned int lineNumber);
-	~AddToCallStack();
+	AddToCallStack(const std::string& fileName, const std::string& funcName, unsigned int lineNumber) noexcept;
+	~AddToCallStack() noexcept;
 };
 
 };	// End namespace SLogLib.

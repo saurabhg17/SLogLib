@@ -28,7 +28,7 @@ class ErrorFormatter : public AbstractFormatter
 {
 public:
 
-	explicit ErrorFormatter(NewLine newLine = NewLine::No)
+	explicit ErrorFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine)
 	{}
 

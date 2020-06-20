@@ -51,7 +51,7 @@ public:
 public:
 	
 	// Return the only instance of LoggingManager.
-	static LoggingManager& Instance()
+	static LoggingManager& Instance() noexcept
 	{
 		static LoggingManager _singleton;
 		return _singleton;
@@ -71,10 +71,10 @@ public:
 	// Push a function to the current call stack.
 	void PushFunction(const std::string& fileName, 
 		              const std::string& funcName,  
-					  unsigned int       lineNumber);
+					  unsigned int       lineNumber) noexcept;
 	
 	// Pop the topmost function from the call stack.
-	void PopFunction();
+	void PopFunction() noexcept;
 	
 	// Write the message to all enabled logging devices.
 	void WriteMessage(const std::string& fileName, 
@@ -87,7 +87,7 @@ public:
 private:
 	
 	// Private to make the class single instance.
-	LoggingManager();
+	LoggingManager() noexcept;
 
 
 private:

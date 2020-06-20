@@ -21,9 +21,10 @@ class NullFormatter : public AbstractFormatter
 {
 public:
 	
-	explicit NullFormatter(NewLine newLine = NewLine::No)
+	explicit NullFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine)
-	{}
+	{
+	}
 
 	inline std::string formatMessage(const Message& msg) const override
 	{

@@ -19,7 +19,7 @@ thread_local CallStack gCallStack;
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 struct LoggingManagerPriv
 {
-	LoggingManagerPriv()
+	LoggingManagerPriv() noexcept
 		: mIsDisabled(false)
 	{
 	}
@@ -47,7 +47,7 @@ struct LoggingManagerPriv
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-LoggingManager::LoggingManager() 
+LoggingManager::LoggingManager() noexcept
 {
 	mPriv = new LoggingManagerPriv;
 }
@@ -162,7 +162,7 @@ AbstractLoggingDevice* LoggingManager::QueryDevice(const std::string& deviceName
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::PushFunction(const std::string& fileName,
 	                              const std::string& funcName, 
-								  unsigned int       lineNumber)
+								  unsigned int       lineNumber) noexcept
 {
 	if(!mPriv->mIsDisabled)
 	{
@@ -174,7 +174,7 @@ void LoggingManager::PushFunction(const std::string& fileName,
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void LoggingManager::PopFunction()
+void LoggingManager::PopFunction() noexcept
 {
 	if(!mPriv->mIsDisabled)
 	{

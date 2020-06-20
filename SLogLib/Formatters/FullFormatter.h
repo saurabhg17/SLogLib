@@ -23,7 +23,8 @@ class FullFormatter : public AbstractFormatter
 {
 public:
 
-	explicit FullFormatter() : AbstractFormatter(NewLine::No)
+	explicit FullFormatter(NewLine newLine=NewLine::No) noexcept
+		: AbstractFormatter(newLine)
 	{}
 	
 	

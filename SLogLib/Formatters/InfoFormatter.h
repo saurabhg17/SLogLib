@@ -24,7 +24,7 @@ class InfoFormatter : public AbstractFormatter
 {
 public:
 
-	explicit InfoFormatter(NewLine newLine = NewLine::No)
+	explicit InfoFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine)
 	{}
 

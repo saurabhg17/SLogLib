@@ -13,7 +13,7 @@ namespace SLogLib {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 AddToCallStack::AddToCallStack(const std::string& fileName, 
 							   const std::string& funcName, 
-							   unsigned int       lineNumber)
+							   unsigned int       lineNumber) noexcept
 {
 	LoggingManager::Instance().PushFunction(fileName, funcName, lineNumber);
 }
@@ -21,7 +21,7 @@ AddToCallStack::AddToCallStack(const std::string& fileName,
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-AddToCallStack::~AddToCallStack()
+AddToCallStack::~AddToCallStack() noexcept
 {
 	LoggingManager::Instance().PopFunction();
 }

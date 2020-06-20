@@ -66,19 +66,19 @@ std::string FileLogger::FileName() const
 {
 	return mPriv->mFileName;
 }
-void FileLogger::EnableAutoFlush()
+void FileLogger::EnableAutoFlush() noexcept
 {
 	mPriv->mHasAutoFlush = true;
 }
-void FileLogger::DisableAutoFlush()
+void FileLogger::DisableAutoFlush() noexcept
 {
 	mPriv->mHasAutoFlush = false;
 }
-void FileLogger::SetAutoFlush(bool b)
+void FileLogger::SetAutoFlush(bool b) noexcept
 {
 	mPriv->mHasAutoFlush = b;
 }
-bool FileLogger::IsAutoFlushEnabled() const
+bool FileLogger::IsAutoFlushEnabled() const noexcept
 {
 	return mPriv->mHasAutoFlush;
 }

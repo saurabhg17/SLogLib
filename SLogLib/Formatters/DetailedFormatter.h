@@ -35,7 +35,7 @@ class DetailedFormatter : public AbstractFormatter
 {
 public:
 
-	explicit DetailedFormatter(NewLine newLine = NewLine::No)
+	explicit DetailedFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine)
 	{}
 

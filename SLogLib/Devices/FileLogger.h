@@ -44,10 +44,10 @@ public:
 public:
 	
 	std::string FileName() const;
-	void EnableAutoFlush();
-	void DisableAutoFlush();
-	void SetAutoFlush(bool b);
-	bool IsAutoFlushEnabled() const;
+	void EnableAutoFlush() noexcept;
+	void DisableAutoFlush() noexcept;
+	void SetAutoFlush(bool b) noexcept;
+	bool IsAutoFlushEnabled() const noexcept;
 	
 
 private:

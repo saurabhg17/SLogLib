@@ -21,7 +21,7 @@ class HtmlFormatter : public AbstractFormatter
 {
 public:
 
-	explicit HtmlFormatter(NewLine newLine = NewLine::No)
+	explicit HtmlFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine), mInfoColor("black"), mWarnColor("coral"), 
 	      mErrorColor("red"), mDebugColor("fuchsia"), mDetailColor("purple"), mBottomMargin(0.4)
 	{}

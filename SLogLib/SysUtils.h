@@ -26,7 +26,7 @@ struct DateTime
 	unsigned short mSecond;
 	unsigned short mMilliseconds;
 	
-	DateTime() 
+	DateTime() noexcept
 		: mYear(0), mMonth(0), mDayOfWeek(0), mDay(0), mHour(0), mMinute(0), 
 		  mSecond(0), mMilliseconds(0)
 	{}
@@ -36,13 +36,13 @@ struct DateTime
 SLOGLIB_DLL_API void sleep(unsigned int msec);
 
 // Get the ID of the current process.
-SLOGLIB_DLL_API unsigned int getCurrentProcessID();
+SLOGLIB_DLL_API unsigned int getCurrentProcessID() noexcept;
 
 // Get the ID of the current thread.
-SLOGLIB_DLL_API unsigned int getCurrentThreadID();
+SLOGLIB_DLL_API unsigned int getCurrentThreadID() noexcept;
 
 // Get the current local date and time.
-SLOGLIB_DLL_API DateTime getLocalDateTime();
+SLOGLIB_DLL_API DateTime getLocalDateTime() noexcept;
 
 
 // Convert the enum class member to its integer value.

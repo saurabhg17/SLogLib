@@ -65,18 +65,18 @@ public: // Getters and setters.
 	
 	inline void Enable()          {SetEnabled(true);}
 	inline void Disable()         {SetEnabled(false);}
-	bool IsEnabled() const;
+	bool IsEnabled() const noexcept;
 	void SetEnabled(bool x);
 	
 	inline void EnableBuffering()  {SetBuffered(true);}
 	inline void DisableBuffering() {SetBuffered(false);}
-	bool IsBuffered() const;
+	bool IsBuffered() const noexcept;
 	void SetBuffered(bool x);
 	
-	size_t BufferedMessagesCount() const;
+	size_t BufferedMessagesCount() const noexcept;
 	void SetBufferedMessagesCount(size_t x);
 	
-	inline virtual bool IsThreadSafe() const {return true;}
+	inline virtual bool IsThreadSafe() const noexcept {return true;}
 
 
 protected:
