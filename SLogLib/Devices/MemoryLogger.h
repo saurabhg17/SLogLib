@@ -55,11 +55,11 @@ public: // Disable copying.
 
 	// Delete copy constructor and assignment operator.
 	MemoryLogger(const MemoryLogger&) = delete;
-    MemoryLogger & operator=(const MemoryLogger&) = delete;
+	MemoryLogger & operator=(const MemoryLogger&) = delete;
 	
 	// Delete move constructor and assignment operator.
 	MemoryLogger(const MemoryLogger&&) = delete;
-    MemoryLogger & operator=(const MemoryLogger&&) = delete;
+	MemoryLogger & operator=(const MemoryLogger&&) = delete;
 
 
 private:

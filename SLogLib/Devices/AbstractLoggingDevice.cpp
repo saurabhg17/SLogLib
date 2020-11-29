@@ -22,7 +22,7 @@ struct AbstractLoggingDevicePriv
 	{
 		assert(mFormatter);
 		mBufferedMessages.reserve(mBufferedMessagesCount);
-
+		
 		static std::atomic_int _deviceID(1);
 		std::ostringstream _stream;
 		_stream << "LoggingDevice_" << std::setfill('0') << std::setw(3) << _deviceID++;
@@ -40,7 +40,7 @@ struct AbstractLoggingDevicePriv
 	{
 		delete mFormatter;
 	}
-
+	
 	AbstractFormatter*       mFormatter;
 	std::string              mName;
 	bool                     mIsEnabled;             // Default: true
@@ -73,7 +73,7 @@ std::string AbstractLoggingDevice::Name() const
 {
 	return mPriv->mName;
 }
-AbstractFormatter* AbstractLoggingDevice::formatter()
+AbstractFormatter* AbstractLoggingDevice::Formatter()
 {
 	return mPriv->mFormatter;
 }
@@ -102,7 +102,7 @@ void AbstractLoggingDevice::WriteMessage(const Message& message)
 		{
 			// Use a recursive lock as we need to lock again in _FlushBufferedMessages().
 			std::lock_guard<std::recursive_mutex> _lock(mPriv->mBufferedMessagesMutex);
-
+			
 			if(mPriv->mBufferedMessages.size() < mPriv->mBufferedMessagesCount)
 			{
 				mPriv->mBufferedMessages.emplace_back(_formattedMessage);

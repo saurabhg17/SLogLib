@@ -63,7 +63,7 @@ public: // Getters and setters.
 	
 	std::string Name() const;
 	
-	AbstractFormatter* formatter();
+	AbstractFormatter* Formatter();
 
 	inline void Enable()          {SetEnabled(true);}
 	inline void Disable()         {SetEnabled(false);}
@@ -102,11 +102,11 @@ public: // Disable copying and moving.
 
 	// Delete copy constructor and assignment operator.
 	AbstractLoggingDevice(const AbstractLoggingDevice&) = delete;
-    AbstractLoggingDevice & operator=(const AbstractLoggingDevice&) = delete;
+	AbstractLoggingDevice & operator=(const AbstractLoggingDevice&) = delete;
 
 	// Delete move constructor and assignment operator.
 	AbstractLoggingDevice(const AbstractLoggingDevice&&) = delete;
-    AbstractLoggingDevice & operator=(const AbstractLoggingDevice&&) = delete;
+	AbstractLoggingDevice & operator=(const AbstractLoggingDevice&&) = delete;
 
 private:
 	
