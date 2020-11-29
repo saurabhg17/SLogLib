@@ -8,6 +8,7 @@
 #define _SLOGLIB_ADDTOCALLSTACK_H_
 
 #include "SLogLib/Config.h"
+#include "SLogLib/DisableCopy.h"
 #include <string>
 
 namespace SLogLib {
@@ -19,6 +20,10 @@ struct SLOGLIB_DLL_API AddToCallStack
 {
 	AddToCallStack(const std::string& fileName, const std::string& funcName, unsigned int lineNumber) noexcept;
 	~AddToCallStack() noexcept;
+
+private:
+
+	S_DISABLE_COPY(AddToCallStack);
 };
 
 };	// End namespace SLogLib.

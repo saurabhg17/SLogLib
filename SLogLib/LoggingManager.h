@@ -8,6 +8,7 @@
 #define _SLOGLIB_LOGGINGMANAGER_H_
 
 #include "SLogLib/Config.h"
+#include "SLogLib/DisableCopyMove.h"
 #include "SLogLib/AddToCallStack.h"
 #include "SLogLib/Devices/AbstractLoggingDevice.h"
 #include <list>
@@ -33,28 +34,22 @@ class SLOGLIB_DLL_API LoggingManager
 {
 public:
 
-	// Disable copying of LoggingManager instances in the client code.
-	// This makes sure there is only one instance of the logger.
-	LoggingManager(const LoggingManager&) = delete;
-	LoggingManager& operator=(const LoggingManager&) = delete;
-	LoggingManager(const LoggingManager&&) = delete;
-	LoggingManager& operator=(const LoggingManager&&) = delete;
-
+	S_DISABLE_COPYMOVE(LoggingManager);
 	~LoggingManager();
 
-	void EnableLogging();
-	void DisableLogging();
-	void SetDisabled(bool d);
-	bool IsDisabled() const;
+	void EnableLogging() noexcept;
+	void DisableLogging() noexcept;
+	void SetDisabled(bool d) noexcept;
+	bool IsDisabled() const noexcept;
 	
 	
 public:
 	
 	// Return the only instance of LoggingManager.
-	static LoggingManager& Instance() noexcept
+	static LoggingManager* Instance()
 	{
 		static LoggingManager _singleton;
-		return _singleton;
+		return &_singleton;
 	}
 	
 	// Add a new logging device. The device is owned by the logging manager 
@@ -87,7 +82,7 @@ public:
 private:
 	
 	// Private to make the class single instance.
-	LoggingManager() noexcept;
+	LoggingManager();
 
 
 private:

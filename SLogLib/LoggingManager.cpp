@@ -26,7 +26,7 @@ struct LoggingManagerPriv
 
 	~LoggingManagerPriv()
 	{
-		// Destructor will be called by the main thread, just before program dies.
+		// Destructor should be called by the main thread, just before program dies.
 		std::lock_guard<std::mutex> _lock(mLoggingDevicesMutex);
 		for(AbstractLoggingDevice* _device : mLoggingDevices)
 		{
@@ -47,9 +47,9 @@ struct LoggingManagerPriv
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-LoggingManager::LoggingManager() noexcept
+LoggingManager::LoggingManager()
+	: mPriv(new LoggingManagerPriv) 
 {
-	mPriv = new LoggingManagerPriv;
 }
 LoggingManager::~LoggingManager()
 {
@@ -60,19 +60,19 @@ LoggingManager::~LoggingManager()
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 // mIsDisabled is atomic.
-void LoggingManager::EnableLogging()
+void LoggingManager::EnableLogging() noexcept
 {
 	mPriv->mIsDisabled = false;
 }
-void LoggingManager::DisableLogging()
+void LoggingManager::DisableLogging() noexcept
 {
 	mPriv->mIsDisabled = true;
 }
-void LoggingManager::SetDisabled(bool d)
+void LoggingManager::SetDisabled(bool d) noexcept
 {
 	mPriv->mIsDisabled = d;
 }
-bool LoggingManager::IsDisabled() const
+bool LoggingManager::IsDisabled() const noexcept
 {
 	return mPriv->mIsDisabled;
 }

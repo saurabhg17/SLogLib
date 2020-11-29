@@ -12,7 +12,10 @@ namespace SLogLib {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void addLoggingDevice(AbstractLoggingDevice* device)
 {
-	LoggingManager::Instance().AddDevice(device);
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->AddDevice(device);
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -20,7 +23,10 @@ void addLoggingDevice(AbstractLoggingDevice* device)
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void removeLoggingDevice(const std::string& name)
 {
-	LoggingManager::Instance().RemoveDevice(name);
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->RemoveDevice(name);
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -28,7 +34,10 @@ void removeLoggingDevice(const std::string& name)
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void removeLoggingDevice(AbstractLoggingDevice* device)
 {
-	LoggingManager::Instance().RemoveDevice(device);
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->RemoveDevice(device);
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -36,7 +45,11 @@ void removeLoggingDevice(AbstractLoggingDevice* device)
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 AbstractLoggingDevice* queryLoggingDevice(const std::string& name)
 {
-	return LoggingManager::Instance().QueryDevice(name);
+	if(LoggingManager::Instance())
+	{
+		return LoggingManager::Instance()->QueryDevice(name);
+	}
+	return nullptr;
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -48,7 +61,10 @@ void writeMessage(const std::string& fileName,
 				  MessageLevel       level,
 				  const std::string& msg)
 {
-	LoggingManager::Instance().WriteMessage(fileName, funcName, lineNo, level, msg);
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->WriteMessage(fileName, funcName, lineNo, level, msg);
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -56,15 +72,26 @@ void writeMessage(const std::string& fileName,
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void disableLogging()
 {
-	LoggingManager::Instance().SetDisabled(true);
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->SetDisabled(true);
+	}
 }
 void enableLogging()
 {
-	LoggingManager::Instance().SetDisabled(false);
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->SetDisabled(false);
+	}
+	
 }
 bool isLoggingEnabled()
 {
-	return LoggingManager::Instance().IsDisabled();
+	if(LoggingManager::Instance())
+	{
+		return LoggingManager::Instance()->IsDisabled();
+	}
+	return false;
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 

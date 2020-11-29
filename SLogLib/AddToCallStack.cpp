@@ -15,7 +15,10 @@ AddToCallStack::AddToCallStack(const std::string& fileName,
 							   const std::string& funcName, 
 							   unsigned int       lineNumber) noexcept
 {
-	LoggingManager::Instance().PushFunction(fileName, funcName, lineNumber);
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->PushFunction(fileName, funcName, lineNumber);
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -23,7 +26,10 @@ AddToCallStack::AddToCallStack(const std::string& fileName,
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 AddToCallStack::~AddToCallStack() noexcept
 {
-	LoggingManager::Instance().PopFunction();
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->PopFunction();
+	}	
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
