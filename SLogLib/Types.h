@@ -16,11 +16,14 @@ namespace SLogLib {
 // Levels indicating severity of message.
 enum class MessageLevel
 {
-	Info,
-	Warn,
+	None,
+	Fatal,
 	Error,
+	Warn,
+	Info,
 	Debug,
-	Detail
+	Detail,
+	All
 };
 
 SLOGLIB_DLL_API std::string toString(const MessageLevel& messageLevel);

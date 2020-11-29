@@ -63,6 +63,8 @@ public: // Getters and setters.
 	
 	std::string Name() const;
 	
+	AbstractFormatter* formatter();
+
 	inline void Enable()          {SetEnabled(true);}
 	inline void Disable()         {SetEnabled(false);}
 	bool IsEnabled() const noexcept;
@@ -77,8 +79,8 @@ public: // Getters and setters.
 	void SetBufferedMessagesCount(size_t x);
 	
 	inline virtual bool IsThreadSafe() const noexcept {return true;}
-
-
+	
+	
 protected:
 	
 	// Write a single message to the logging device.

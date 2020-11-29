@@ -50,7 +50,7 @@ SLogTextEdit::SLogTextEdit(QWidget* parent) : QTextEdit(parent)
 
 	QFont font("Monospace");
 	font.setStyleHint(QFont::TypeWriter);
-	font.setPointSize(12);
+	font.setPointSize(10);
 	setFont(font);
 
 	connect(this, SIGNAL(WriteMessageInMainThread(const QString&)), this, SLOT(WriteMessage(const QString&)));

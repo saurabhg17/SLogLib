@@ -5,6 +5,7 @@
 // 
 
 #include "SysUtils.h"
+#include <thread>
 #ifdef SLOGLIB_OS_WINDOWS
 	#include <Windows.h>
 #elif defined(SLOGLIB_OS_LINUX) || defined(SLOGLIB_OS_OSX)
@@ -12,7 +13,13 @@
 	#include <sys/time.h>
 	#include <sys/types.h>
 	#include <unistd.h>
+	#include <sys/syscall.h>
 #endif
+
+#if defined(SLOGLIB_OS_OSX)
+	#include <pthread.h>
+#endif
+
 
 namespace SLogLib {
 ;
@@ -54,8 +61,10 @@ unsigned int getCurrentThreadID() noexcept
 {
 #if defined(SLOGLIB_OS_WINDOWS)
 	return ::GetCurrentThreadId();
-#elif defined(SLOGLIB_OS_LINUX) || defined(SLOGLIB_OS_OSX)
-	return 0; // gettid();
+#elif defined(SLOGLIB_OS_LINUX)
+	return syscall(SYS_gettid);
+#elif defined(SLOGLIB_OS_OSX)
+	return pthread_mach_thread_np(pthread_self());
 #endif
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //

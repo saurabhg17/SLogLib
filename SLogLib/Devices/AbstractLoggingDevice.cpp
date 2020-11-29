@@ -73,6 +73,10 @@ std::string AbstractLoggingDevice::Name() const
 {
 	return mPriv->mName;
 }
+AbstractFormatter* AbstractLoggingDevice::formatter()
+{
+	return mPriv->mFormatter;
+}
 bool AbstractLoggingDevice::IsEnabled() const noexcept
 {
 	return mPriv->mIsEnabled;

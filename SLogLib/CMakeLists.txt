@@ -23,6 +23,7 @@ SET(SRCS AddToCallStack.cpp
          LoggingManager.cpp
          SLogLib.cpp
          SysUtils.cpp
+		 Types.cpp
          Devices/AbstractLoggingDevice.cpp
          Devices/FileLogger.cpp
          Devices/MemoryLogger.cpp)
