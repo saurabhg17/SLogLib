@@ -5,6 +5,7 @@
 // 
 
 #include "SLogLib/SLogLib"
+#include "SLogLib/LoggingManager.h"
 
 int main()
 {

@@ -11,9 +11,7 @@
 #include "SLogLib/DisableCopyMove.h"
 #include "SLogLib/AddToCallStack.h"
 #include "SLogLib/Devices/AbstractLoggingDevice.h"
-#include <list>
-#include <mutex>
-#include <atomic>
+
 
 namespace SLogLib {
 ;
@@ -45,11 +43,21 @@ public:
 	
 public:
 	
+	// Return true of LoggingManager was destructed.
+	static bool destructed() noexcept;
+	
 	// Return the only instance of LoggingManager.
 	static LoggingManager* Instance()
 	{
 		static LoggingManager _singleton;
-		return &_singleton;
+		if(destructed())
+		{
+			return nullptr;
+		}
+		else
+		{
+			return &_singleton;
+		}
 	}
 	
 	// Add a new logging device. The device is owned by the logging manager 

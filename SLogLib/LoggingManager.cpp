@@ -6,14 +6,33 @@
 
 #include "LoggingManager.h"
 #include "SysUtils.h"
+#include <list>
+#include <mutex>
+#include <atomic>
+
 
 namespace SLogLib {
 ;
+
+
+// It is set to true after LoggingManager is destructed.
+// It makes Intance() method return nullptr.
+static std::atomic<bool> gLoggingManagerDestructed = false;
+
 
 // Stores call stack per thread.
 // thread_local cannot be used with class members, and static thread_local class member 
 // cannot use __declspec under Windows, hence call stack is declared globally.
 thread_local CallStack gCallStack;
+
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+bool LoggingManager::destructed() noexcept
+{
+	return gLoggingManagerDestructed;
+}
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -32,6 +51,8 @@ struct LoggingManagerPriv
 		{
 			delete _device;
 		}
+
+		gLoggingManagerDestructed = true;
 	}
 
 	// Stores the list of all logging devices registered with SLogLib.
@@ -87,9 +108,9 @@ void LoggingManager::AddDevice(AbstractLoggingDevice* device)
 		std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
 		
 		// Device name must be unique.
-		for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
+		for(const AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
 		{
-			if(device->Name() == _device->Name())
+			if(_device && (device->Name() == _device->Name()))
 			{
 				std::stringstream _stream;
 				_stream << "SLogLib: Device with name '"<< device->Name() << "' already exists.";
