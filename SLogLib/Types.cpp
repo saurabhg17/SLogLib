@@ -11,7 +11,7 @@ namespace SLogLib {
 
 static const std::string _messageLevelStr[] = {"None", "Fatal", "Error", "Warn", "Info", "Debug", "Detail", "All"};
 
-std::string toString(const MessageLevel& messageLevel)
+std::string toString(const MessageLevel& messageLevel) noexcept
 {
 	return _messageLevelStr[static_cast<size_t>(messageLevel)];
 }

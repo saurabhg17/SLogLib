@@ -1,0 +1,21 @@
+// 
+// This file is part of SLogLib; you can redistribute it and/or 
+// modify it under the terms of the MIT License.
+// Author: Saurabh Garg (saurabhgarg@mysoc.net)
+// 
+
+#ifndef _SLOGLIB_VERSION_H_
+#define _SLOGLIB_VERSION_H_
+
+
+#define SLOGLIB_VERSION_MAJOR        @PROJECT_VERSION_MAJOR@
+#define SLOGLIB_VERSION_MINOR        @PROJECT_VERSION_MINOR@
+#define SLOGLIB_VERSION_PATCH        @PROJECT_VERSION_PATCH@
+
+#define SLOGLIB_VERSION             "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
+
+#define SLOGLIB_WIN_FILEVERSION      @PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,0    // Used in Windows resources.
+#define SLOGLIB_WIN_FILEVERSION_STR "@PROJECT_VERSION_MAJOR@,@PROJECT_VERSION_MINOR@,@PROJECT_VERSION_PATCH@,0\0" // Used in Windows resources.
+
+
+#endif // _SLOGLIB_VERSION_H_

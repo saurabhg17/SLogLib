@@ -31,8 +31,8 @@ public:
 	explicit ErrorFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine)
 	{}
-
-
+	
+	
 	inline std::string formatMessage(const Message& msg) const override
 	{
 		if(msg.mLevel != MessageLevel::Error)
@@ -51,7 +51,7 @@ public:
 		else
 		{
 			_stream << "Time       : " << msg.mDateTime.mYear         << "-"
-				                       << msg.mDateTime.mMonth        << "-"
+									   << msg.mDateTime.mMonth        << "-"
 									   << msg.mDateTime.mDay          << " "
 									   << msg.mDateTime.mHour         << ":"
 									   << msg.mDateTime.mMinute       << ":"

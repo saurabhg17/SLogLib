@@ -31,10 +31,14 @@
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 #if defined(SLOGLIB_OS_WINDOWS)
-	#if defined(SLOGLIB_EXPORTS)
-		#define SLOGLIB_DLL_API __declspec(dllexport)
+	#if defined(SLOGLIB_BUILD_DLL)
+		#if defined(SLOGLIB_EXPORTS)
+			#define SLOGLIB_DLL_API __declspec(dllexport)
+		#else
+			#define SLOGLIB_DLL_API __declspec(dllimport)
+		#endif
 	#else
-		#define SLOGLIB_DLL_API __declspec(dllimport)
+		#define SLOGLIB_DLL_API
 	#endif
 #else
 	#define SLOGLIB_DLL_API

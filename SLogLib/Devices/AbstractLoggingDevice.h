@@ -61,17 +61,17 @@ public:
 
 public: // Getters and setters.
 	
-	std::string Name() const;
+	std::string Name() const noexcept;
 	
-	AbstractFormatter* Formatter();
-
-	inline void Enable()          {SetEnabled(true);}
-	inline void Disable()         {SetEnabled(false);}
+	AbstractFormatter* Formatter() const noexcept;
+	
+	inline void Enable() noexcept    {SetEnabled(true);}
+	inline void Disable() noexcept   {SetEnabled(false);}
 	bool IsEnabled() const noexcept;
 	void SetEnabled(bool x);
 	
-	inline void EnableBuffering()  {SetBuffered(true);}
-	inline void DisableBuffering() {SetBuffered(false);}
+	inline void EnableBuffering() noexcept  {SetBuffered(true);}
+	inline void DisableBuffering() noexcept {SetBuffered(false);}
 	bool IsBuffered() const noexcept;
 	void SetBuffered(bool x);
 	
@@ -96,18 +96,18 @@ protected:
 	// For a buffered device, concrete class must call this in the destructor to ensure 
 	// all messages are written to the device before it is deleted.
 	void _FlushBufferedMessages();
-
-
+	
+	
 public: // Disable copying and moving.
-
+	
 	// Delete copy constructor and assignment operator.
 	AbstractLoggingDevice(const AbstractLoggingDevice&) = delete;
 	AbstractLoggingDevice & operator=(const AbstractLoggingDevice&) = delete;
-
+	
 	// Delete move constructor and assignment operator.
 	AbstractLoggingDevice(const AbstractLoggingDevice&&) = delete;
 	AbstractLoggingDevice & operator=(const AbstractLoggingDevice&&) = delete;
-
+	
 private:
 	
 	AbstractLoggingDevicePriv* mPriv;

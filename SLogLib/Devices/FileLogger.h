@@ -9,6 +9,7 @@
 
 #include "SLogLib/Config.h"
 #include "SLogLib/Devices/AbstractLoggingDevice.h"
+#include "SLogLib/DisableCopyMove.h"
 #include "SLogLib/Types.h"
 #include <fstream>
 #include <mutex>
@@ -40,16 +41,16 @@ public:
 	// to the file. Calling FlushDevice() forces std::ofstream to write its buffer to the file.
 	void FlushDevice();
 	
-
+	
 public:
 	
-	std::string FileName() const;
+	std::string FileName() const noexcept;
 	void EnableAutoFlush() noexcept;
 	void DisableAutoFlush() noexcept;
 	void SetAutoFlush(bool b) noexcept;
 	bool IsAutoFlushEnabled() const noexcept;
 	
-
+	
 private:
 	
 	void _WriteMessage(const std::string& message) override;
@@ -57,16 +58,10 @@ private:
 	
 	
 public: // Disable copying.
-
-	// Delete copy constructor and assignment operator.
-	FileLogger(const FileLogger&) = delete;
-    FileLogger & operator=(const FileLogger&) = delete;
 	
-	// Delete move constructor and assignment operator.
-	FileLogger(const FileLogger&&) = delete;
-    FileLogger & operator=(const FileLogger&&) = delete;
-
-
+	S_DISABLE_COPYMOVE(FileLogger)
+	
+	
 private:
 	
 	FileLoggerPriv* mPriv;

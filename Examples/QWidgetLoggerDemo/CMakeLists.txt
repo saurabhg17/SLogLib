@@ -1,48 +1,32 @@
 
-# This policy enabled auto-linking of QtMain.
-# It was introduced in CMake version 2.8.11.
-if(POLICY CMP0020)
-  cmake_policy(SET CMP0020 NEW)
-endif()
-
-# Find includes in corresponding build directories.
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-# Find the Qt library
-if(SLOGLIB_USE_QT_VERSION STREQUAL Qt5)
-	find_package(Qt5Widgets)
-elseif(SLOGLIB_USE_QT_VERSION STREQUAL Qt4)
-	find_package(Qt4 4.0.0 REQUIRED QtCore QtGui)
-	include(${QT_USE_FILE})
+if(CMAKE_VERSION VERSION_LESS "3.7.0")
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
-if(WIN32)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
-endif()
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
-set(RELEASE_MANGLED_NAME "QWidgetLoggerDemo")
-set(DEBUG_MANGLED_NAME   "QWidgetLoggerDemo${SLOGLIB_DEBUG_POSTFIX}")
+add_executable(QWidgetLoggerDemo
+				../../Contrib/QWidgetLogger/QWidgetLogger.h
+				../../Contrib/QWidgetLogger/QWidgetLogger.cpp
+				Main.cpp)
 
-add_executable(QWidgetLoggerDemo ../../Contrib/QWidgetLogger/QWidgetLogger.h ../../Contrib/QWidgetLogger/QWidgetLogger.cpp Main.cpp)
-target_include_directories(QWidgetLoggerDemo PRIVATE ../../Contrib/QWidgetLogger)
+set_target_properties(QWidgetLoggerDemo
+						PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
-# Set the name of targets based on configurations.
-set_target_properties(QWidgetLoggerDemo PROPERTIES 
-                        OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}" 
-						OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}" 
-						OUTPUT_NAME_MINSIZEREL     "${RELEASE_MANGLED_NAME}" 
-						OUTPUT_NAME_RELWITHDEBINFO "${RELEASE_MANGLED_NAME}")
-						
-if(SLOGLIB_USE_QT_VERSION STREQUAL Qt5)
-	target_link_libraries(QWidgetLoggerDemo SLogLib Qt5::Widgets)
-elseif(SLOGLIB_USE_QT_VERSION STREQUAL Qt4)
-	target_link_libraries(QWidgetLoggerDemo SLogLib ${QT_LIBRARIES})
-endif()
+target_include_directories(QWidgetLoggerDemo
+							PRIVATE ../../Contrib/QWidgetLogger)
+
+target_link_libraries(QWidgetLoggerDemo SLogLib Qt5::Widgets)
+
+target_compile_options(LoggingDemo PRIVATE
+						$<$<CXX_COMPILER_ID:MSVC>:/W4>
+						$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra>)
 
 install(TARGETS QWidgetLoggerDemo
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+		RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+
+if(MSVC)
+	install(FILES $<TARGET_PDB_FILE:QWidgetLoggerDemo> DESTINATION bin OPTIONAL)
+endif()

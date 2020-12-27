@@ -25,26 +25,6 @@ namespace SLogLib {
 ;
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void sleep(unsigned int msec)
-{
-#ifdef SLOGLIB_OS_WINDOWS
-	Sleep(msec);
-#elif defined(SLOGLIB_OS_LINUX) || defined(SLOGLIB_OS_OSX)
-	if(msec == 0)
-	{
-		msec = 10;
-	}
-	struct timespec _req = {msec/1000, (msec%1000)*1000*1000};
-	while(nanosleep(&_req, &_req) == -1)
-	{
-		continue;
-	}
-#endif
-}
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 unsigned int getCurrentProcessID() noexcept
 {
 #if defined(SLOGLIB_OS_WINDOWS)

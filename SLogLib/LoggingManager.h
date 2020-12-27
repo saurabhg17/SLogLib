@@ -35,29 +35,22 @@ public:
 	S_DISABLE_COPYMOVE(LoggingManager);
 	~LoggingManager();
 
-	void EnableLogging() noexcept;
-	void DisableLogging() noexcept;
-	void SetDisabled(bool d) noexcept;
-	bool IsDisabled() const noexcept;
+	void EnableLogging();
+	void DisableLogging();
+	void SetDisabled(bool d);
+	bool IsDisabled() const;
 	
 	
 public:
 	
 	// Return true of LoggingManager was destructed.
-	static bool destructed() noexcept;
+	static bool destructed();
 	
 	// Return the only instance of LoggingManager.
 	static LoggingManager* Instance()
 	{
 		static LoggingManager _singleton;
-		if(destructed())
-		{
-			return nullptr;
-		}
-		else
-		{
-			return &_singleton;
-		}
+		return destructed() ? nullptr : &_singleton;
 	}
 	
 	// Add a new logging device. The device is owned by the logging manager 
@@ -74,10 +67,10 @@ public:
 	// Push a function to the current call stack.
 	void PushFunction(const std::string& fileName, 
 		              const std::string& funcName,  
-					  unsigned int       lineNumber) noexcept;
+					  unsigned int       lineNumber);
 	
 	// Pop the topmost function from the call stack.
-	void PopFunction() noexcept;
+	void PopFunction();
 	
 	// Write the message to all enabled logging devices.
 	void WriteMessage(const std::string& fileName, 

@@ -29,18 +29,18 @@ public:
 	
 	// Return all messages logged so far concatenated into a string.
 	std::string Messages() const;
-
+	
 	// Return the list of all messages logged so far.
 	const std::list<std::string>& MessageList() const noexcept;
-
-
+	
+	
 private:
 	
 	void _WriteMessage(const std::string& message) override;
-
-
+	
+	
 private:
-
+	
 	// Buffering message for a memory logger is not meaningful so 
 	// disable all buffering functions from the parent class.
 	void   EnableBuffering() = delete;
@@ -49,10 +49,10 @@ private:
 	void   SetBuffered(bool x) = delete;
 	size_t BufferedMessagesCount() = delete;
 	void   SetBufferedMessagesCount(size_t x) = delete;
-
-
+	
+	
 public: // Disable copying.
-
+	
 	// Delete copy constructor and assignment operator.
 	MemoryLogger(const MemoryLogger&) = delete;
 	MemoryLogger & operator=(const MemoryLogger&) = delete;
@@ -60,10 +60,10 @@ public: // Disable copying.
 	// Delete move constructor and assignment operator.
 	MemoryLogger(const MemoryLogger&&) = delete;
 	MemoryLogger & operator=(const MemoryLogger&&) = delete;
-
-
+	
+	
 private:
-
+	
 	MemoryLoggerPriv* mPriv;
 };
 

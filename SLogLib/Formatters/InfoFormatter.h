@@ -27,8 +27,8 @@ public:
 	explicit InfoFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine)
 	{}
-
-
+	
+	
 	inline std::string formatMessage(const Message& msg) const override
 	{
 		if(msg.mLevel != MessageLevel::Info)
@@ -49,9 +49,9 @@ public:
 		{
 			_stream.fill('0');
 			_stream << std::setw(4) << msg.mDateTime.mYear         << "."
-			        << std::setw(2) << msg.mDateTime.mMonth        << "."
-			        << std::setw(2) << msg.mDateTime.mDay          << "-"
-			        << std::setw(2) << msg.mDateTime.mHour         << ":"
+					<< std::setw(2) << msg.mDateTime.mMonth        << "."
+					<< std::setw(2) << msg.mDateTime.mDay          << "-"
+					<< std::setw(2) << msg.mDateTime.mHour         << ":"
 					<< std::setw(2) << msg.mDateTime.mMinute       << ":"
 					<< std::setw(2) << msg.mDateTime.mSecond       << ":"
 					<< std::setw(3) << msg.mDateTime.mMilliseconds << ": ";

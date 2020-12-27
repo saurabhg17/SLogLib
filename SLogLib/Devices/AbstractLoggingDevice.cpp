@@ -54,40 +54,16 @@ struct AbstractLoggingDevicePriv
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 AbstractLoggingDevice::AbstractLoggingDevice(AbstractFormatter* formatter)
+	: AbstractLoggingDevice(formatter, "")
 {
-	mPriv = new AbstractLoggingDevicePriv(formatter);
 }
 AbstractLoggingDevice::AbstractLoggingDevice(AbstractFormatter* formatter, const std::string& name)
+	: mPriv(new AbstractLoggingDevicePriv(formatter, name))
 {
-	mPriv = new AbstractLoggingDevicePriv(formatter, name);
 }
 AbstractLoggingDevice::~AbstractLoggingDevice()
 {
 	delete mPriv;
-}
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-std::string AbstractLoggingDevice::Name() const
-{
-	return mPriv->mName;
-}
-AbstractFormatter* AbstractLoggingDevice::Formatter()
-{
-	return mPriv->mFormatter;
-}
-bool AbstractLoggingDevice::IsEnabled() const noexcept
-{
-	return mPriv->mIsEnabled;
-}
-bool AbstractLoggingDevice::IsBuffered() const noexcept
-{
-	return mPriv->mIsBuffered;
-}
-size_t AbstractLoggingDevice::BufferedMessagesCount() const noexcept
-{
-	return mPriv->mBufferedMessagesCount;
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -118,6 +94,30 @@ void AbstractLoggingDevice::WriteMessage(const Message& message)
 			_WriteMessage(_formattedMessage);
 		}
 	}
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+std::string AbstractLoggingDevice::Name() const noexcept
+{
+	return mPriv->mName;
+}
+AbstractFormatter* AbstractLoggingDevice::Formatter() const noexcept
+{
+	return mPriv->mFormatter;
+}
+bool AbstractLoggingDevice::IsEnabled() const noexcept
+{
+	return mPriv->mIsEnabled;
+}
+bool AbstractLoggingDevice::IsBuffered() const noexcept
+{
+	return mPriv->mIsBuffered;
+}
+size_t AbstractLoggingDevice::BufferedMessagesCount() const noexcept
+{
+	return mPriv->mBufferedMessagesCount;
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 

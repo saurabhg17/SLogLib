@@ -25,7 +25,7 @@ public:
 		: AbstractFormatter(newLine)
 	{
 	}
-
+	
 	inline std::string formatMessage(const Message& msg) const override
 	{
 		if(mNewLine == NewLine::Yes)

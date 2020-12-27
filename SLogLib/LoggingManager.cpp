@@ -10,15 +10,12 @@
 #include <mutex>
 #include <atomic>
 
-
 namespace SLogLib {
 ;
 
-
 // It is set to true after LoggingManager is destructed.
-// It makes Intance() method return nullptr.
-static std::atomic<bool> gLoggingManagerDestructed = false;
-
+// After LoggingManager is destructed, LoggingManager::Instance() returns nullptr.
+static std::atomic<bool> gLoggingManagerDestructed{ false };
 
 // Stores call stack per thread.
 // thread_local cannot be used with class members, and static thread_local class member 
@@ -26,9 +23,8 @@ static std::atomic<bool> gLoggingManagerDestructed = false;
 thread_local CallStack gCallStack;
 
 
-
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-bool LoggingManager::destructed() noexcept
+bool LoggingManager::destructed()
 {
 	return gLoggingManagerDestructed;
 }
@@ -42,7 +38,7 @@ struct LoggingManagerPriv
 		: mIsDisabled(false)
 	{
 	}
-
+	
 	~LoggingManagerPriv()
 	{
 		// Destructor should be called by the main thread, just before program dies.
@@ -51,16 +47,16 @@ struct LoggingManagerPriv
 		{
 			delete _device;
 		}
-
+		
 		gLoggingManagerDestructed = true;
 	}
-
+	
 	// Stores the list of all logging devices registered with SLogLib.
 	std::list<AbstractLoggingDevice*> mLoggingDevices;
-
+	
 	// For synchronized access to mLoggingDevices.
 	std::mutex mLoggingDevicesMutex;
-
+	
 	// If true then disable logging.
 	std::atomic_bool mIsDisabled;
 };
@@ -81,19 +77,19 @@ LoggingManager::~LoggingManager()
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 // mIsDisabled is atomic.
-void LoggingManager::EnableLogging() noexcept
+void LoggingManager::EnableLogging()
 {
 	mPriv->mIsDisabled = false;
 }
-void LoggingManager::DisableLogging() noexcept
+void LoggingManager::DisableLogging()
 {
 	mPriv->mIsDisabled = true;
 }
-void LoggingManager::SetDisabled(bool d) noexcept
+void LoggingManager::SetDisabled(bool d)
 {
 	mPriv->mIsDisabled = d;
 }
-bool LoggingManager::IsDisabled() const noexcept
+bool LoggingManager::IsDisabled() const
 {
 	return mPriv->mIsDisabled;
 }
@@ -103,23 +99,30 @@ bool LoggingManager::IsDisabled() const noexcept
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::AddDevice(AbstractLoggingDevice* device)
 {
-	if(!mPriv->mIsDisabled && device != nullptr)
+	if(device == nullptr)
 	{
-		std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
-		
-		// Device name must be unique.
-		for(const AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
-		{
-			if(_device && (device->Name() == _device->Name()))
-			{
-				std::stringstream _stream;
-				_stream << "SLogLib: Device with name '"<< device->Name() << "' already exists.";
-				throw std::runtime_error(_stream.str());
-			}
-		}
-		
-		mPriv->mLoggingDevices.push_back(device);
+		return;
 	}
+	
+	if(IsDisabled())
+	{
+		return;
+	}
+	
+	std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
+	
+	// Device name must be unique.
+	for(const AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
+	{
+		if(_device && !_device->Name().empty() && (device->Name() == _device->Name()))
+		{
+			std::stringstream _stream;
+			_stream << "SLogLib: Device with name '"<< device->Name() << "' already exists.";
+			throw std::runtime_error(_stream.str());
+		}
+	}
+	
+	mPriv->mLoggingDevices.push_back(device);
 }
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -138,23 +141,25 @@ void LoggingManager::RemoveDevice(AbstractLoggingDevice* device)
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::RemoveDevice(const std::string& deviceName)
 {
-	if(!mPriv->mIsDisabled)
+	if(mPriv->mIsDisabled)
 	{
-		// Lock must be here because another thread can add 
-		// a new device while we are iterating over logging devices.
-		std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
-
-		// We don't have to worry about iterator becoming invalid 
-		// since we exit from loop immediately after erasing the device
-		for(auto _iter = mPriv->mLoggingDevices.begin() ; _iter!=mPriv->mLoggingDevices.end() ; ++_iter)
+		return;
+	}
+	
+	// Lock must be here because another thread can add 
+	// a new device while we are iterating over logging devices.
+	std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
+	
+	// We don't have to worry about iterator becoming invalid 
+	// since we exit from loop immediately after erasing the device
+	for(auto _iter = mPriv->mLoggingDevices.begin() ; _iter!=mPriv->mLoggingDevices.end() ; ++_iter)
+	{
+		AbstractLoggingDevice* _device = *_iter;
+		if(deviceName == _device->Name())
 		{
-			AbstractLoggingDevice* _device = *_iter;
-			if(deviceName == _device->Name())
-			{
-				mPriv->mLoggingDevices.erase(_iter);
-				delete _device;
-				return;
-			}
+			mPriv->mLoggingDevices.erase(_iter);
+			delete _device;
+			return;
 		}
 	}
 }
@@ -164,10 +169,10 @@ void LoggingManager::RemoveDevice(const std::string& deviceName)
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 AbstractLoggingDevice* LoggingManager::QueryDevice(const std::string& deviceName)
 {
-	// Lock must be here because another thread can add 
+	// Lock must be here because another thread can add/remove 
 	// a new device while the for loop is running.
 	std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
-
+	
 	for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
 	{
 		if(_device && deviceName == _device->Name())
@@ -183,7 +188,7 @@ AbstractLoggingDevice* LoggingManager::QueryDevice(const std::string& deviceName
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::PushFunction(const std::string& fileName,
 	                              const std::string& funcName, 
-								  unsigned int       lineNumber) noexcept
+								  unsigned int       lineNumber)
 {
 	if(!mPriv->mIsDisabled)
 	{
@@ -195,7 +200,7 @@ void LoggingManager::PushFunction(const std::string& fileName,
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void LoggingManager::PopFunction() noexcept
+void LoggingManager::PopFunction()
 {
 	if(!mPriv->mIsDisabled)
 	{
@@ -208,40 +213,43 @@ void LoggingManager::PopFunction() noexcept
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void LoggingManager::WriteMessage(const std::string& fileName, 
-	                              const std::string& funcName,
+								  const std::string& funcName,
 								  unsigned int       lineNumber,
 								  MessageLevel       level,
 								  const std::string& message)
 {
-	if(!mPriv->mIsDisabled)
+	if(mPriv->mIsDisabled)
 	{
-		PushFunction(fileName, funcName, lineNumber);
-		
-		// Generate the message.
-		Message _message;
-		_message.mUserMessage = message;
-		_message.mDateTime    = SLogLib::getLocalDateTime();
-		_message.mLevel       = level;
-		_message.mCallStack   = &gCallStack;
-		_message.mProcessId   = SLogLib::getCurrentProcessID();
-		_message.mThreadId    = SLogLib::getCurrentThreadID();
-		
-		// Lock must be here because another thread can add or 
-		// remove a device while the for loop is running.
-		std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
-
-		// Iterate over all LoggingDevices and write the message
-		// to the enabled devices.
-		for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
-		{
-			if(_device && _device->IsEnabled())
-			{
-				_device->WriteMessage(_message);
-			}
-		}
-		
-		PopFunction();
+		return;
 	}
+	
+	
+	PushFunction(fileName, funcName, lineNumber);
+	
+	// Generate the message.
+	Message _message;
+	_message.mUserMessage = message;
+	_message.mDateTime    = SLogLib::getLocalDateTime();
+	_message.mLevel       = level;
+	_message.mCallStack   = &gCallStack;
+	_message.mProcessId   = SLogLib::getCurrentProcessID();
+	_message.mThreadId    = SLogLib::getCurrentThreadID();
+		
+	// Lock must be here because another thread can add or 
+	// remove a device while the for loop is running.
+	std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);
+	
+	// Iterate over all LoggingDevices and write the message
+	// to the enabled devices.
+	for(AbstractLoggingDevice* _device : mPriv->mLoggingDevices)
+	{
+		if(_device && _device->IsEnabled())
+		{
+			_device->WriteMessage(_message);
+		}
+	}
+	
+	PopFunction();
 }
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 

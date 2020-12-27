@@ -14,7 +14,7 @@
 namespace SLogLib {
 ;
 
-// The FullFormatter class formats only all messages.
+// The FullFormatter class formats all messages.
 // A message is formatted as: 
 // Time	ThreadID	Message
 // Entries are tab separated.

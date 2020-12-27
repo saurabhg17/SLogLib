@@ -26,7 +26,7 @@ enum class MessageLevel
 	All
 };
 
-SLOGLIB_DLL_API std::string toString(const MessageLevel& messageLevel);
+SLOGLIB_DLL_API std::string toString(const MessageLevel& messageLevel) noexcept;
 
 
 // Flag for inserting new line after every message.

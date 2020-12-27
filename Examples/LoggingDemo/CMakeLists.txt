@@ -1,22 +1,17 @@
 
-if(WIN32)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
-endif()
-
-set(RELEASE_MANGLED_NAME "LoggingDemo")
-set(DEBUG_MANGLED_NAME   "LoggingDemo${SLOGLIB_DEBUG_POSTFIX}")
-
 add_executable(LoggingDemo LoggingDemo.cpp)
+
+set_target_properties(LoggingDemo
+						PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+
 target_link_libraries(LoggingDemo SLogLib)
 
-# Set the name of targets based on configurations.
-set_target_properties(LoggingDemo PROPERTIES 
-                        OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}" 
-						OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}" 
-						OUTPUT_NAME_MINSIZEREL     "${RELEASE_MANGLED_NAME}" 
-						OUTPUT_NAME_RELWITHDEBINFO "${RELEASE_MANGLED_NAME}")
+target_compile_options(LoggingDemo PRIVATE
+						$<$<CXX_COMPILER_ID:MSVC>:/W4>
+						$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra>)
 						
-install(TARGETS LoggingDemo
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS LoggingDemo RUNTIME DESTINATION bin)
+
+if(MSVC)
+	install(FILES $<TARGET_PDB_FILE:LoggingDemo> DESTINATION bin OPTIONAL)
+endif()

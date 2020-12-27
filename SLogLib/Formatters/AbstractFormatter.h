@@ -14,12 +14,12 @@
 namespace SLogLib {
 ;
 
-// The AbstractFormatter class is the base class of all formatters. Formatter is used by a 
-// logging device to format a Message to std::string.
+// The AbstractFormatter class is the base class of all formatters. 
+// Formatter is used by a logging device to format a Message to std::string.
 class AbstractFormatter
 {
 public:
-
+	
 	explicit AbstractFormatter(NewLine newLine = NewLine::No) noexcept
 		: mNewLine(newLine)
 	{}
@@ -28,7 +28,7 @@ public:
 	
 	// Format a message to std::string.
 	virtual std::string formatMessage(const Message& msg) const = 0;
-
+	
 	
 protected:
 

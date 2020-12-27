@@ -4,10 +4,19 @@
 // Author: Saurabh Garg (saurabhgarg@mysoc.net)
 // 
 
-#include "SLogLib.h"
+#include "SLogLib/SLogLib.h"
+#include "SLogLib/Version.h"
 
 namespace SLogLib {
 ;
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+std::string version()
+{
+	return SLOGLIB_VERSION;
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void addLoggingDevice(AbstractLoggingDevice* device)
@@ -43,33 +52,6 @@ void removeLoggingDevice(AbstractLoggingDevice* device)
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-AbstractLoggingDevice* queryLoggingDevice(const std::string& name)
-{
-	if(LoggingManager::Instance())
-	{
-		return LoggingManager::Instance()->QueryDevice(name);
-	}
-	return nullptr;
-}
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-void writeMessage(const std::string& fileName,
-	              const std::string& funcName,
-				  unsigned int       lineNo,
-				  MessageLevel       level,
-				  const std::string& msg)
-{
-	if(LoggingManager::Instance())
-	{
-		LoggingManager::Instance()->WriteMessage(fileName, funcName, lineNo, level, msg);
-	}
-}
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-
-
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 void disableLogging()
 {
 	if(LoggingManager::Instance())
@@ -92,6 +74,33 @@ bool isLoggingEnabled()
 		return LoggingManager::Instance()->IsDisabled();
 	}
 	return false;
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+AbstractLoggingDevice* queryLoggingDevice(const std::string& name)
+{
+	if(LoggingManager::Instance())
+	{
+		return LoggingManager::Instance()->QueryDevice(name);
+	}
+	return nullptr;
+}
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
+void writeMessage(const std::string& fileName,
+	              const std::string& funcName,
+				  unsigned int       lineNo,
+				  MessageLevel       level,
+				  const std::string& msg)
+{
+	if(LoggingManager::Instance())
+	{
+		LoggingManager::Instance()->WriteMessage(fileName, funcName, lineNo, level, msg);
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 

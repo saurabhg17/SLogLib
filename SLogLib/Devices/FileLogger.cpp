@@ -41,14 +41,14 @@ struct FileLoggerPriv
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 FileLogger::FileLogger(const std::string& fileName, Open flag, AbstractFormatter* formatter)
-	: AbstractLoggingDevice(formatter)
+	: FileLogger(fileName, flag, formatter, "")
 {
-	mPriv = new FileLoggerPriv(fileName, flag);
 }
-FileLogger::FileLogger(const std::string& fileName, Open flag, AbstractFormatter* formatter, const std::string& name) 
-	: AbstractLoggingDevice(formatter, name)
+FileLogger::FileLogger(const std::string& fileName, Open flag, AbstractFormatter* formatter, 
+	                   const std::string& name) 
+	: AbstractLoggingDevice(formatter, name), mPriv(new FileLoggerPriv(fileName, flag))
 {
-	mPriv = new FileLoggerPriv(fileName, flag);
+	
 }
 FileLogger::~FileLogger()
 {
@@ -62,7 +62,7 @@ FileLogger::~FileLogger()
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-std::string FileLogger::FileName() const
+std::string FileLogger::FileName() const noexcept
 {
 	return mPriv->mFileName;
 }
@@ -109,7 +109,7 @@ void FileLogger::_WriteMessage(const std::string& message)
 			throw std::runtime_error(_stream.str());
 		}
 	}
-
+	
 	mPriv->mFileHandle << message;
 	
 	if(mPriv->mHasAutoFlush)
@@ -124,7 +124,7 @@ void FileLogger::_WriteMessage(const std::string& message)
 void FileLogger::_WriteMessages(const std::vector<std::string>& messages)
 {
 	std::lock_guard<std::recursive_mutex> _lock(mPriv->mFileWriteMutex);
-
+	
 	if(!mPriv->mFileHandle)
 	{
 		mPriv->mFileHandle.open(mPriv->mFileName.c_str());
@@ -135,7 +135,7 @@ void FileLogger::_WriteMessages(const std::vector<std::string>& messages)
 			throw std::runtime_error(_stream.str());
 		}
 	}
-
+	
 	for(const std::string& _message : messages)
 	{
 		mPriv->mFileHandle << _message;

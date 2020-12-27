@@ -19,16 +19,18 @@ class ConsoleLogger : public AbstractLoggingDevice
 public:
 	
 	explicit ConsoleLogger(AbstractFormatter* formatter) 
-		: AbstractLoggingDevice(formatter) {}
-	explicit ConsoleLogger(AbstractFormatter* formatter, const std::string& name) 
-		: AbstractLoggingDevice(formatter, name) {}
+		: ConsoleLogger(formatter, "")
+	{}
+	ConsoleLogger(AbstractFormatter* formatter, const std::string& name) 
+		: AbstractLoggingDevice(formatter, name)
+	{}
 	
 	~ConsoleLogger()
 	{
 		_FlushBufferedMessages();
 	}
-
-
+	
+	
 protected:
 	
 	inline void _WriteMessage(const std::string& message) override

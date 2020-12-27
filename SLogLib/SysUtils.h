@@ -32,9 +32,6 @@ struct DateTime
 	{}
 };
 
-// Sleep the current thread for specified milliseconds.
-SLOGLIB_DLL_API void sleep(unsigned int msec);
-
 // Get the ID of the current process.
 SLOGLIB_DLL_API unsigned int getCurrentProcessID() noexcept;
 

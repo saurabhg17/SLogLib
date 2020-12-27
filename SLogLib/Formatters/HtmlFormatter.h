@@ -20,7 +20,7 @@ namespace SLogLib {
 class HtmlFormatter : public AbstractFormatter
 {
 public:
-
+	
 	explicit HtmlFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine), mInfoColor("black"), mWarnColor("coral"), 
 	      mErrorColor("red"), mDebugColor("fuchsia"), mDetailColor("purple"), mBottomMargin(0.4)
@@ -35,7 +35,7 @@ public:
 	inline std::string debugColor()   const {return mDebugColor;}
 	inline std::string detailColor()  const {return mDetailColor;}
 	inline double      bottomMargin() const {return mBottomMargin;}
-
+	
 	inline void setInfoColor(const std::string& c)   {mInfoColor    = c;}
 	inline void setWarnColor(const std::string& c)   {mWarnColor    = c;}
 	inline void setErrorColor(const std::string& c)  {mErrorColor   = c;}
@@ -43,7 +43,7 @@ public:
 	inline void setDetailColor(const std::string& c) {mDetailColor  = c;}
 	inline void setBottomMargin(double m)            {mBottomMargin = m;}
 	
-
+	
 public:
 	
 	inline std::string formatMessage(const Message& msg) const override
@@ -57,7 +57,7 @@ public:
 		else
 		{
 			_stream << "<p style=\"color:" << _getColor(msg.mLevel) << "; "
-			        << "margin-left:1em; "
+					<< "margin-left:1em; "
 					<< "margin-right:1em; "
 					<< "margin-top:0em; "
 					<< "margin-bottom:" << mBottomMargin << "em;"
@@ -81,10 +81,10 @@ public:
 		}
 		return _stream.str();
 	}
-
-
+	
+	
 private:
-
+	
 	std::string _getColor(MessageLevel level) const
 	{
 		int _level = toInteger(level);
@@ -110,7 +110,7 @@ private:
 		}
 		return mInfoColor;
 	}
-
+	
 private:
 	
 	std::string mInfoColor;

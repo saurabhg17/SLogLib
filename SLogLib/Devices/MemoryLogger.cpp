@@ -20,14 +20,12 @@ struct MemoryLoggerPriv
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 MemoryLogger::MemoryLogger(AbstractFormatter* formatter)
-	: AbstractLoggingDevice(formatter)
+	: MemoryLogger(formatter, "")
 {
-	mPriv = new MemoryLoggerPriv;
 }
 MemoryLogger::MemoryLogger(AbstractFormatter* formatter, const std::string& name) 
-	: AbstractLoggingDevice(formatter, name)
+	: AbstractLoggingDevice(formatter, name), mPriv(new MemoryLoggerPriv)
 {
-	mPriv = new MemoryLoggerPriv;
 }
 MemoryLogger::~MemoryLogger()
 {
@@ -57,7 +55,7 @@ void MemoryLogger::_WriteMessage(const std::string& message)
 std::string MemoryLogger::Messages() const
 {
 	std::lock_guard<std::mutex> _lock(mPriv->mMessagesMutex);
-
+	
 	std::stringstream _stream;
 	for(const std::string& _message : mPriv->mMessages)
 	{

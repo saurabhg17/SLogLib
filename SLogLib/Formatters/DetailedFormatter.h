@@ -34,12 +34,12 @@ namespace SLogLib {
 class DetailedFormatter : public AbstractFormatter
 {
 public:
-
+	
 	explicit DetailedFormatter(NewLine newLine = NewLine::No) noexcept
 		: AbstractFormatter(newLine)
 	{}
-
-
+	
+	
 	inline std::string formatMessage(const Message& msg) const override
 	{
 		size_t         _size     = msg.mCallStack->size();
@@ -48,7 +48,7 @@ public:
 		std::ostringstream _stream;
 		_stream << "Msg Level  : " << toInteger(msg.mLevel)       << std::endl;
 		_stream << "Time       : " << msg.mDateTime.mYear         << "-"
-			                       << msg.mDateTime.mMonth        << "-"
+								   << msg.mDateTime.mMonth        << "-"
 								   << msg.mDateTime.mDay          << " "
 								   << msg.mDateTime.mHour         << ":"
 								   << msg.mDateTime.mMinute       << ":"
