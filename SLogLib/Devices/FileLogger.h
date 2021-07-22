@@ -33,8 +33,8 @@ class SLOGLIB_DLL_API FileLogger : public AbstractLoggingDevice
 {
 public:
 	
-	FileLogger(const std::string& fileName, Open flag, AbstractFormatter* formatter);
-	FileLogger(const std::string& fileName, Open flag, AbstractFormatter* formatter, const std::string& name);
+	FileLogger(const std::string& fileName, std::ios_base::openmode mode, FileOpenFlag flag, AbstractFormatter* formatter);
+	FileLogger(const std::string& fileName, std::ios_base::openmode mode, FileOpenFlag flag, AbstractFormatter* formatter, const std::string& name);
 	~FileLogger();
 	
 	// std::ofstream itself is a buffered device and string sent to it are not immediately written

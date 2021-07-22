@@ -15,40 +15,39 @@ namespace SLogLib {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 struct FileLoggerPriv
 {
-	FileLoggerPriv(const std::string& fileName, Open flag)
-		: mFileName(fileName), mHasAutoFlush(false), mFileOpenFlag(flag)
+	FileLoggerPriv(const std::string& fileName, std::ios_base::openmode mode, FileOpenFlag flag)
+		: mFileName(fileName), mHasAutoFlush(false), mMode(mode), mFileOpenFlag(flag)
 	{
-		if(mFileOpenFlag == Open::Immediately)
+		if(mFileOpenFlag == FileOpenFlag::Immediately)
 		{
-			mFileHandle.open(mFileName.c_str());
+			mFileHandle.open(mFileName.c_str(), mMode);
 			if(!mFileHandle.is_open())
 			{
 				std::stringstream _stream;
-				_stream << "SlogLib: Unable to open " << mFileName << " for writing.";
+				_stream << "SLogLib: Unable to open " << mFileName << " for writing.";
 				throw std::runtime_error(_stream.str());
 			}
 		}
 	}
 	
-	std::ofstream        mFileHandle;
-	std::string          mFileName;
-	bool                 mHasAutoFlush;  // Default: false
-	Open                 mFileOpenFlag;  // Default: FirstUse.
-	std::recursive_mutex mFileWriteMutex;
+	std::ofstream           mFileHandle;
+	std::string             mFileName;
+	bool                    mHasAutoFlush;  // Default: false
+	std::ios_base::openmode mMode;
+	FileOpenFlag            mFileOpenFlag;  // Default: FirstUse.
+	std::recursive_mutex    mFileWriteMutex;
 };
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
-FileLogger::FileLogger(const std::string& fileName, Open flag, AbstractFormatter* formatter)
-	: FileLogger(fileName, flag, formatter, "")
+FileLogger::FileLogger(const std::string& fileName, std::ios_base::openmode mode, FileOpenFlag flag, AbstractFormatter* formatter)
+	: FileLogger(fileName, mode, flag, formatter, "")
 {
 }
-FileLogger::FileLogger(const std::string& fileName, Open flag, AbstractFormatter* formatter, 
-	                   const std::string& name) 
-	: AbstractLoggingDevice(formatter, name), mPriv(new FileLoggerPriv(fileName, flag))
+FileLogger::FileLogger(const std::string& fileName, std::ios_base::openmode mode, FileOpenFlag flag, AbstractFormatter* formatter, const std::string& name) 
+  : AbstractLoggingDevice(formatter, name), mPriv(new FileLoggerPriv(fileName, mode, flag))
 {
-	
 }
 FileLogger::~FileLogger()
 {
@@ -105,7 +104,7 @@ void FileLogger::_WriteMessage(const std::string& message)
 		if(!mPriv->mFileHandle.is_open())
 		{
 			std::stringstream _stream;
-			_stream << "SlogLib: Unable to open " << mPriv->mFileName << " for writing.";
+			_stream << "SLogLib: Unable to open " << mPriv->mFileName << " for writing.";
 			throw std::runtime_error(_stream.str());
 		}
 	}
@@ -131,7 +130,7 @@ void FileLogger::_WriteMessages(const std::vector<std::string>& messages)
 		if(!mPriv->mFileHandle.is_open())
 		{
 			std::stringstream _stream;
-			_stream << "SlogLib: Unable to open " << mPriv->mFileName << " for writing.";
+			_stream << "SLogLib: Unable to open " << mPriv->mFileName << " for writing.";
 			throw std::runtime_error(_stream.str());
 		}
 	}

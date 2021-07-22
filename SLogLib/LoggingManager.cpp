@@ -234,7 +234,7 @@ void LoggingManager::WriteMessage(const std::string& fileName,
 	_message.mCallStack   = &gCallStack;
 	_message.mProcessId   = SLogLib::getCurrentProcessID();
 	_message.mThreadId    = SLogLib::getCurrentThreadID();
-		
+	
 	// Lock must be here because another thread can add or 
 	// remove a device while the for loop is running.
 	std::lock_guard<std::mutex> _lock(mPriv->mLoggingDevicesMutex);

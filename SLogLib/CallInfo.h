@@ -40,7 +40,7 @@ public:
 };
 
 // Define a type for storing array of CallInfo's forming a CallStack.
-typedef std::vector<CallInfo> CallStack;
+using CallStack = std::vector<CallInfo>;
 
 };	// End namespace SLogLib.
 

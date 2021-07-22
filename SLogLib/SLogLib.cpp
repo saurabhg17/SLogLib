@@ -71,9 +71,12 @@ bool isLoggingEnabled()
 {
 	if(LoggingManager::Instance())
 	{
-		return LoggingManager::Instance()->IsDisabled();
+		return !LoggingManager::Instance()->IsDisabled();
 	}
-	return false;
+	else
+	{
+		return false;
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 
@@ -85,7 +88,10 @@ AbstractLoggingDevice* queryLoggingDevice(const std::string& name)
 	{
 		return LoggingManager::Instance()->QueryDevice(name);
 	}
-	return nullptr;
+	else
+	{
+		return nullptr;
+	}
 }
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 

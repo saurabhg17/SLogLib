@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.10)
 
 
 project(SLogLib 
-        LANGUAGES    CXX
-		VERSION      1.2.0
+		LANGUAGES    CXX
+		VERSION      1.3.0
 		DESCRIPTION  "SLogLib is a c++ logging library")
 
 

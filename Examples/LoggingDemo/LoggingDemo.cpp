@@ -13,7 +13,7 @@ int main()
 	// The devices and formatters are automatically deleted by SLogLib.
 	using namespace SLogLib;
 	addLoggingDevice(new ConsoleLogger(new NullFormatter));
-	addLoggingDevice(new FileLogger("foo.log", Open::Immediately, new DetailedFormatter));
+	addLoggingDevice(new FileLogger("foo.log", std::ios_base::app, FileOpenFlag::Immediately, new DetailedFormatter));
 	
 	// The following line writes the message to both console and file.
 	int a = 10;

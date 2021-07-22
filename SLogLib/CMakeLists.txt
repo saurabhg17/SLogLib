@@ -51,13 +51,14 @@ endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Version.h.in ${CMAKE_CURRENT_BINARY_DIR}/Version.h @ONLY)
 
-set(SOURCES ${HEADERS_CORE} 
-            ${HEADERS_DEVICES}
-			${HEADERS_FORMATTERS}
-			${SOURCES_CORE}
-			${SOURCES_DEVICES}
-			${RESOURCES}
-			${CMAKE_CURRENT_BINARY_DIR}/Version.h)
+set(SOURCES
+	${HEADERS_CORE} 
+	${HEADERS_DEVICES}
+	${HEADERS_FORMATTERS}
+	${SOURCES_CORE}
+	${SOURCES_DEVICES}
+	${RESOURCES}
+	${CMAKE_CURRENT_BINARY_DIR}/Version.h)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 
 
@@ -86,9 +87,9 @@ target_include_directories(${LIB_NAME}
 							PUBLIC ${CMAKE_BINARY_DIR})
 
 if(UNIX)
-	set_target_properties(${LIB_NAME} PROPERTIES 
-							VERSION   ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-							SOVERSION ${PROJECT_VERSION_MAJOR})
+	#set_target_properties(${LIB_NAME} PROPERTIES 
+	#						VERSION   ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+	#						SOVERSION ${PROJECT_VERSION_MAJOR})
 elseif(MSVC AND NOT SLOGLIB_BUILD_SHARED_LIBS)
 	set_target_properties(${LIB_NAME} PROPERTIES
 							COMPILE_PDB_NAME_DEBUG          ${LIB_NAME}${CMAKE_DEBUG_POSTFIX}
@@ -118,9 +119,9 @@ endif()
 
 # Install the header files.
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION include 
-			FILES_MATCHING 
-			PATTERN "*.h"
-			PATTERN "SLogLib"
-			PATTERN "Platform" EXCLUDE)
+		FILES_MATCHING 
+		PATTERN "*.h"
+		PATTERN "SLogLib"
+		PATTERN "Platform" EXCLUDE)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Version.h DESTINATION include/SLogLib)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #

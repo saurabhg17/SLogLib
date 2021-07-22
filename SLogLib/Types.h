@@ -37,7 +37,7 @@ enum class NewLine
 };
 
 // Flag to indicate when a file should be opened for writing.
-enum class Open
+enum class FileOpenFlag
 {
 	Immediately, FirstUse
 };

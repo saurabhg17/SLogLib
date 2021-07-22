@@ -57,13 +57,13 @@
 namespace SLogLib {
 ;
 
-SLOGLIB_DLL_API  std::string  version();
-SLOGLIB_DLL_API  void         addLoggingDevice(AbstractLoggingDevice* device);
-SLOGLIB_DLL_API  void         removeLoggingDevice(AbstractLoggingDevice* device);
-SLOGLIB_DLL_API  void         removeLoggingDevice(const std::string& name);
-SLOGLIB_DLL_API  void         disableLogging();
-SLOGLIB_DLL_API  void         enableLogging();
-SLOGLIB_DLL_API  bool         isLoggingEnabled();
+SLOGLIB_DLL_API std::string version();
+SLOGLIB_DLL_API void        addLoggingDevice(AbstractLoggingDevice* device);
+SLOGLIB_DLL_API void        removeLoggingDevice(AbstractLoggingDevice* device);
+SLOGLIB_DLL_API void        removeLoggingDevice(const std::string& name);
+SLOGLIB_DLL_API void        disableLogging();
+SLOGLIB_DLL_API void        enableLogging();
+SLOGLIB_DLL_API bool        isLoggingEnabled();
 
 
 // Get a pointer to the logging device from name. The returned pointer must not be deleted or changed.
@@ -71,7 +71,7 @@ SLOGLIB_DLL_API AbstractLoggingDevice* queryLoggingDevice(const std::string& nam
 
 
 // Write a message to all active logging devices.
-SLOGLIB_DLL_API void writeMessage(const std::string& fileName,
+SLOGLIB_DLL_API void writeMessage(const std::string& fileName, 
 	                              const std::string& funcName,
 								  unsigned int       lineNo,
 								  MessageLevel       level,
